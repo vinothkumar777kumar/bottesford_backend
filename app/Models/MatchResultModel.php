@@ -90,5 +90,42 @@ public function getlastmatchresult(){
 	}
     return $data;
 }
+
+public function getleaguetabledata(){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('teams');
+	// $q = $this->db->query('select count(mrt.team_one) FROM teams as t
+	// join match_result_tbl as mrt  on t.team_name = mrt.team_one
+	// where t.team_name Like mrt.team_one');
+	// return $builder->get()->getResult();
+$arr = array();
+$winmatch = array();
+
+	// return $wm->getResult();
+	foreach ($builder->get()->getResult() as $row)
+{
+		// echo $row->team_name;
+		// $b = $this->table('match_result_tbl');
+	// 	$q = $this->db->query("select count(mrt.team_one) as playedmatch,'$row->team_name' as team_name,
+	// 	mrt.team_one_goal,mrt.team_two_goal FROM match_result_tbl as mrt
+	// where mrt.team_one ='$row->team_name' or  mrt.team_two ='$row->team_name'");
+	$q = $this->db->query("select '$row->team_name' as team, count(mrt.team_one) as mp, (team_one_goal > team_two_goal) as win, (team_one_goal = team_two_goal) as draw, 
+	(team_one_goal < team_two_goal) as loss  FROM match_result_tbl as mrt 
+	where mrt.team_one ='$row->team_name' or  mrt.team_two ='$row->team_name' group By team");
+
+	$wm = $this->db->query("select team_one, team_two, (team_one_goal > team_two_goal) as win, (team_one_goal = team_two_goal) as draw, 
+	(team_one_goal < team_two_goal) as loss  FROM fball.match_result_tbl");
+	// return $wm->getResult();
+		foreach($q->getResult() as $r){
+			$arr[] = $r;
+		}	
+}
+
+
+return $arr;
+
+
+}
+
 }
 ?>

@@ -32,7 +32,7 @@ $routes->options('(:any)', 'OptionsController::options'); //one options method f
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Home::index');
+$routes->get('/', 'TeamController::index');
 
 
 	$routes->group('api',['namespace' => 'App\Controllers'],function($routes){
@@ -103,9 +103,26 @@ $routes->get('/', 'Home::index');
 
 		// GET LAST MATCH RESULT
 		$routes->get('getlastmatchresult', 'MatchResultController::getlastmatchresult');
+
+		// get league table data
+		$routes->get('getleaguetabledata', 'MatchResultController::getleaguetabledata');
 		
+		// team manager signup details
 		
+		$routes->post('managersignup','AuthController::managersignup');
+		$routes->get('getdashboardcount/(:any)', 'TeamController::getteamplayerscount/$1');
+		$routes->get('getmanagerteamplayers/(:any)', 'TeamController::getallteamplayers/$1');
+		$routes->get('getmanagerallmatchdata/(:any)', 'TeamController::getallteammatch/$1');
+
+
+		// blog 
 		
+		$routes->get('getallblog', 'BlogController::getallblog');
+		$routes->post('addblog','BlogController::addblog');
+		$routes->get('editblog/(:any)', 'BlogController::editblog/$1');
+		$routes->post('updateblog/(:any)','BlogController::updateblog/$1');
+		$routes->get('deleteblog/(:any)', 'BlogController::deletblog/$1');
+		$routes->get('deleteblogimage/(:any)', 'BlogController::deleteblogimage/$1');
 		 
 		 
 		 

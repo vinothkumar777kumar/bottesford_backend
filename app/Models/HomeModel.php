@@ -14,6 +14,7 @@ protected $primaryKey = 'id';
 
 	public function updatepassword($data){
 		$db  = \Config\Database::connect();
+
 	$builder = $db->table($this->table);
 	$builder->select('*');
 	$builder->where('id', $data['user_id']);
@@ -29,6 +30,14 @@ protected $primaryKey = 'id';
 
 	}
 
+	public function getusers(){
+		$db  = \Config\Database::connect();
+		$builder = $db->table($this->table);
+		$builder->select('*');
+		$builder->where('role_type', 3);
+		$d = $builder->get()->getResult();
+		return $d;
+	}
 
 	
 }

@@ -18,9 +18,9 @@ class TeamController extends ResourceController
 	public function __construct(){
 $this->protect = new AuthController();
 	}
-	// public function index(){
-	// 	echo view('welcome_message');
-	// 		}
+	public function index(){
+		// echo view('welcome_message');
+			}
 	
 
 	
@@ -37,23 +37,38 @@ $this->protect = new AuthController();
 				$decode = JWT::decode($token,$secret_key,array('HS256'));
 				if($decode){
                     helper(['form', 'url']);
-                    $this->validation = \Config\Services::validation();
+					$this->validation = \Config\Services::validation();
+					$encrypter = \Config\Services::encrypter();
                     if ($this->request->getMethod() == 'post') {
                         
                         $data = $this->request->getJSON();
                         $team_data = [
-                            'team_name'=> $data->team_name,
+							'team_name'=> $data->team_name,
+							'team_manager_name'=> $data->team_manager_name,
+							'team_manager_mobile'=> $data->team_manager_mobile,
+							'team_manager_email'=> $data->team_manager_email,
+							// 'team_manager_password'=> base64_encode($encrypter->encrypt($data->team_manager_password)),
                             'status' => $data->status
                         ];
-                        // $model = new TicketModel();
-                        // return json_encode($user_data);
+						$rules = [
+							$team_data['team_name'] => 'required',
+							$team_data['team_manager_name'] => 'required',
+							$user_data['team_manager_mobile'] => 'required|is_unique[teams.mobile]',
+							$team_data['team_manager_email'] => 'required|valid_email|is_unique[teams.team_manager_email]',
+							// $team_data['team_manager_password'] => 'required|min_length[8]|max_length[255]'
+						];
+						$error = $this->validation->setRules($rules);
+						$msg = $this->validation->run($team_data, 'team_details');
+						if (!$msg) {
+							return $this->respondCreated(['status' => false, 'error' => $this->validation->getErrors()]);
+						} else {
                         $res = $this->model->insert($team_data);
                         $output = [
                             'message' => 'Team Added Successfully',
                             'status' => 'success'
                         ];
                             return $this->respond($output,200);
-                
+					}
                         
                     } else {
                         return $this->fail('Only post request is allowed');
@@ -81,6 +96,16 @@ $this->protect = new AuthController();
 				// $decode = JWT::decode($token,$secret_key,array('HS256'));
 				// if($decode){
 							$teams = $this->model->findAll();
+							$getallteam = [];
+							$encrypter = \Config\Services::encrypter();
+							// $plainText = 'This is a plain-text message!';
+					// $ciphertext = $encrypter->encrypt($plainText);
+							// foreach($teams as $tm){
+							//  array_push($getallteam, array('id' => $tm['id'],
+							//  'team_name' => $tm['team_name'],'role_type' => $tm['role_type'],
+							//  'eccript_text' => $encrypter->decrypt($tm['team_manager_password'])));
+								
+							// }
 							$output = [
 								'status' => 'success',
 								'data' => $teams
@@ -219,8 +244,11 @@ return $this->respond($output, 200);
 	if ($this->request->getMethod() == 'post') {
 		$data = $this->request->getJSON();
 		$team_data = [
-			'id'=> $data->id,
-			'team_name' => $data->team_name,
+			'team_name'=> $data->team_name,
+			'team_manager_name'=> $data->team_manager_name,
+			'team_manager_mobile'=> $data->team_manager_mobile,
+			'team_manager_email'=> $data->team_manager_email,
+			// 'team_manager_password'=> base64_encode($encrypter->encrypt($data->team_manager_password)),
 			'status' => $data->status
 		];
 		
@@ -240,7 +268,8 @@ return $this->respond($output, 200);
                 'error' => $res
             ];
             return $this->respond($output, 401);  
-        }
+		}
+	
 		
 	} else {
 		return $this->fail('Only post request is allowed');
@@ -424,6 +453,102 @@ return $this->respond($output, 401);
 			// 		return $this->respond($output, 401);
 			// }
 		// }
+	}
+
+
+	
+	public function getteamplayerscount($id)
+	{
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
+					// return $id;
+							$players = $this->model->getmanagerdashboarddata($id);
+							// print_r($players);
+							// return;
+							$output = [
+								'status' => 'success',
+								'data' => $players
+							];
+							return $this->respond($output, 200);
+				
+		// 		}
+		// 	} catch (\Exception $e) {
+		// 		$output = [
+		// 				'message' => 'Access denied',
+		// 				'error' => $e->getMessage()
+		// 			];
+		// 			return $this->respond($output, 401);
+		// 	}
+		// }
+	}
+
+	public function getallteamplayers($id){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
+					// return $id;
+							$players = $this->model->getallteamplayers($id);
+							// print_r($players);
+							// return;
+							$output = [
+								'status' => 'success',
+								'data' => $players
+							];
+							return $this->respond($output, 200);
+				
+		// 		}
+		// 	} catch (\Exception $e) {
+		// 		$output = [
+		// 				'message' => 'Access denied',
+		// 				'error' => $e->getMessage()
+		// 			];
+		// 			return $this->respond($output, 401);
+		// 	}
+		// }
+	}
+	
+	public function getallteammatch($id){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		if($token){
+			try {
+				$decode = JWT::decode($token,$secret_key,array('HS256'));
+				if($decode){
+					// return $id;
+							$matches = $this->model->getallteammatches($id);
+							// print_r($players);
+							// return;
+							$output = [
+								'status' => 'success',
+								'data' => $matches
+							];
+							return $this->respond($output, 200);
+				
+				}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
+		}
 	}
 
 	public function editteamplayer($id){

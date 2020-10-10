@@ -36,7 +36,7 @@ $this->protect = new AuthController();
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
 		// 		if($decode){
-					$users = $this->model->findAll();
+					$users = $this->model->getusers();
 					$output = [
 						'status' => 'success',
 						'data' => $users

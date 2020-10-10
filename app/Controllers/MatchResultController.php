@@ -207,6 +207,35 @@ $this->protect = new AuthController();
 		// }
 	}
 
+	public function getleaguetabledata(){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
+							$teams = $this->model->getleaguetabledata();
+							// return print_r($teams);
+							$output = [
+								'status' => 'success',
+								'data' => $teams
+							];
+							return $this->respond($output, 200);
+				
+		// 		}
+		// 	} catch (\Exception $e) {
+		// 		$output = [
+		// 				'message' => 'Access denied',
+		// 				'error' => $e->getMessage()
+		// 			];
+		// 			return $this->respond($output, 401);
+		// 	}
+		// }
+	}
+
 
     
 

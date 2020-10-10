@@ -84,6 +84,9 @@ class AuthController extends ResourceController
                 $check_login = $this->Auth->check_login($email);
                 // return $this->respond($check_login, 200);
                 if (password_verify($password, $check_login['password'])) {
+                    // if($check_login['role_type'] == 2){
+                    //     $get_manager_data = $this->Auth->get_manager_data($check_login['email']);
+                    // }
                     $secret_key = $this->privateKey();
                     $issuser_claim = "THE_CLAIM";
                     $audience_claim = "THE_AUDIENCE";
@@ -231,6 +234,7 @@ class AuthController extends ResourceController
                 'email' => $data->email,
                 'password' => $data->password,
                 'mobile' => $data->mobile,
+                'role_type' => $data->role_type,
                 'status' => $data->status
             ];
             $rules = [
@@ -256,6 +260,7 @@ class AuthController extends ResourceController
                         'email' => $data->email,
                         'password' => password_hash($data->password, PASSWORD_DEFAULT),
                         'mobile' => $data->mobile,
+                        'role_type' => $data->role_type,
                         'status' => $data->status
                     ];
                     $register = $this->Auth->register($userdata);
@@ -263,6 +268,64 @@ class AuthController extends ResourceController
                            $output = [
                                 'status' => 'success',
                                 'message' => 'Register Successfully',
+                            ];
+                            return $this->respond($output, 200);
+                    } else {
+                       $output = [
+                            'status' => '401',
+                            'message' => 'Sorry,Register not Successfully',
+                        ];
+                        return $this->respond($output, 401);
+                    }
+                }
+        } else {
+            return $this->fail('Only post request is allowed');
+        }
+    }
+
+    public function managersignup()
+    {
+        $this->setHeaders();
+        $data = [];
+        helper(['form', 'url']);
+        $this->validation = \Config\Services::validation();
+        if ($this->request->getMethod() == 'post') {
+            $data = $this->request->getJSON();
+            $user_data = [
+                'name' => $data->name,
+                'email' => $data->email,
+                'password' => $data->password,
+                'mobile' => $data->mobile
+            ];
+            $rules = [
+                $user_data['name'] => 'required|min_length[3]|max_length[20]',
+                $user_data['email'] => 'required|valid_email|is_unique[team_manager_tbl.email]',
+                $user_data['password'] => 'required|min_length[8]|max_length[255]',
+                $user_data['mobile'] => 'required|is_unique[team_manager_tbl.mobile]'
+            ];
+            $error = $this->validation->setRules($rules);
+            $msg = $this->validation->run($user_data, 'manager_signup');
+            if (!$msg)
+            {
+                  $output = [
+                                'status' => 401,
+                                'validation_error' => $this->validation->getErrors(),
+                            ];
+                            return $this->respond($output, 401);
+                // return $this->respondCreated(['status' => false, 'error' => $this->validation->getErrors()]);
+            } else {
+                    $model = new AuthModel();
+                    $userdata = [
+                        'name' => $data->name,
+                        'email' => $data->email,
+                        'password' => password_hash($data->password, PASSWORD_DEFAULT),
+                        'mobile' => $data->mobile
+                    ];
+                    $register = $this->Auth->manager_signup($userdata);
+                    if ($register == true) {
+                           $output = [
+                                'status' => 'success',
+                                'message' => 'Sign up Successfully',
                             ];
                             return $this->respond($output, 200);
                     } else {

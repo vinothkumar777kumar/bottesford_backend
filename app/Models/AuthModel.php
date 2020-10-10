@@ -9,7 +9,7 @@ class AuthModel extends Model
 {
 	protected $table = 'users';
 protected $primaryKey = 'id';
-	protected $allowedFields = ['name','email','password','mobile','status'];
+	protected $allowedFields = ['name','email','password','mobile','status','role_type'];
 	protected $beforeInsert = ['beforeInsert'];
 	protected $beforeUpdate = ['beforeUpdate'];
 	
@@ -34,6 +34,12 @@ return $data;
 	public function register($data){
 		$data = $this->passwordHash($data);
 		$query = $this->db->table($this->table)->insert($data);
+		return $query ? true : false;
+	}
+
+	public function manager_signup($data){
+		$data = $this->passwordHash($data);
+		$query = $this->db->table('team_manager_tbl')->insert($data);
 		return $query ? true : false;
 	}
 
