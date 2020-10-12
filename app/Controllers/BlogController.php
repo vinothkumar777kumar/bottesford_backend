@@ -139,7 +139,7 @@ $this->protect = new AuthController();
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
 		// 		if($decode){
-							$blog = $this->model->findAll();
+							$blog = $this->model->getallblog();
 							$output = [
 								'status' => 'success',
 								'data' => $blog

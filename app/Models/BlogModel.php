@@ -28,6 +28,15 @@ protected $primaryKey = 'id';
 	// return $q;
 	}
 
+	public function getallblog(){
+		$db  = \Config\Database::connect();
+		$builder = $db->table($this->table);
+		$builder->select('*');
+		$builder->where('status', 1);
+		$q = $builder->get();
+		return $q->getResult();
+	}
+
 	
 }
 ?>
