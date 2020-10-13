@@ -118,7 +118,7 @@ $filter = [];
 	// 	$q = $this->db->query("select count(mrt.team_one) as playedmatch,'$row->team_name' as team_name,
 	// 	mrt.team_one_goal,mrt.team_two_goal FROM match_result_tbl as mrt
 	// where mrt.team_one ='$row->team_name' or  mrt.team_two ='$row->team_name'");
-	$to = $this->db->query("select '$row->team_name' as team, count(mrt.team_one) as mp, sum(mrt.team_one_goal > mrt.team_two_goal) as win,sum(mrt.team_one_goal = mrt.team_two_goal) as draw, 
+	$to = $this->db->query("select mrt.team_one as team, count(mrt.team_one) as mp, sum(mrt.team_one_goal > mrt.team_two_goal) as win,sum(mrt.team_one_goal = mrt.team_two_goal) as draw, 
 	sum(mrt.team_one_goal < mrt.team_two_goal) as loss  FROM match_result_tbl as mrt 
 	where mrt.team_one ='$row->team_name' group by team");
 
@@ -126,17 +126,17 @@ $filter = [];
 			$arr[] = $r;
 		}
 
-		$tt = $this->db->query("select '$row->team_name' as team, count(mrt.team_two) as mp, sum(mrt.team_two_goal > mrt.team_one_goal) as win, sum(mrt.team_two_goal = mrt.team_one_goal) as draw, 
+		$tt = $this->db->query("select mrt.team_two as team, count(mrt.team_two) as mp, sum(mrt.team_two_goal > mrt.team_one_goal) as win, sum(mrt.team_two_goal = mrt.team_one_goal) as draw, 
 		sum(mrt.team_two_goal < mrt.team_one_goal) as loss  FROM match_result_tbl as mrt 
 		where mrt.team_two ='$row->team_name' group By team");
 		
-		foreach($to->getResult() as $r){
+		// foreach($arr as $r){
 			foreach($tt->getResult() as $t){
-				if($r->team == $t->team){
+				// if($r->team != $t->team){
 				$arr[] = $t;
-				}
+				// }
 			}
-		}
+		// }
 	
 }
 
