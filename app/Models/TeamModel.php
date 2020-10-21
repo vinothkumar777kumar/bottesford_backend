@@ -83,7 +83,8 @@ public function getmanagerdashboarddata($id){
 			$q =  $this->db->query("select count(*) as totalplayer from players as p where p.team =". $teamdata[0]->id)->getResult();
 			$m =  $this->db->query("select count(*) as playedmatch,(mrt.team_one_goal > mrt.team_two_goal) as win from match_result_tbl as mrt 
 			where mrt.team_one ='$team_name' or mrt.team_two ='$team_name'")->getResult();
-	array_push($alldata,array('totalplayer' => $q[0]->totalplayer,'playedmatch'=>$m[0]->playedmatch,'winmatch'=>$m[0]->win));
+	array_push($alldata,array('totalplayer' => $q[0]->totalplayer,'playedmatch'=>$m[0]->playedmatch,
+	'winmatch'=>$m[0]->win,'team_id' => $teamdata[0]->id));
 	return $alldata;
 		 }
 	}
@@ -128,6 +129,13 @@ public function getallteammatches($id){
 	}else{
 		return array();
 	}
+}
+
+public function deleteplayer($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('players');
+	$del = $builder->delete(['id' => $id]);
+	return $del;
 }
 
 }

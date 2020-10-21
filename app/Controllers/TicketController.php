@@ -38,29 +38,46 @@ $this->protect = new AuthController();
                     $this->validation = \Config\Services::validation();
                     if ($this->request->getMethod() == 'post') {
                         
-                        $data = $this->request->getJSON();
-                        $user_data = [
-							'match_id' => $data->match_id,
-                            'match_type'=> $data->match_type,
-                            'matchdate' => $data->matchdate,
-                            'team_one' => $data->team_one,
-                            'team_one_img' => $data->team_one_img,
-                            'team_two' => $data->team_two,
-                            'team_two_img' => $data->team_two_img,
-                            'ticket' => $data->ticket,
-                            'ticket_price' => $data->ticket_price,
-                            'user_id' => $data->user_id
+						$data = $this->request->getJSON();
+						$ticket_data = $data->data;
+						$user_id = $data->user_id;
+						$user_data = array();
+						foreach($ticket_data as $t){
+                        $user_data[] = [
+							'match_id' => $t->match_id,
+                            'match_type'=> $t->match_name,
+                            'matchdate' => $t->matchdate,
+                            'team_one' => $t->team_one,
+                            'team_one_img' => $t->team_one_image,
+                            'team_two' => $t->team_two,
+                            'team_two_img' => $t->team_two_image,
+                            'ticket' => $t->ticket,
+                            'ticket_price' => $t->ticket_price,
+                            'user_id' => $user_id
 						];
+					}
+					$res = $this->model->insertBatch($user_data);
 						// return json_encode($user_data);
                         // $model = new TicketModel();
-                        // return json_encode($user_data);
-                        $res = $this->model->insert($user_data);
+						// return json_encode($user_data);
+						if($res){
+                        
                         $output = [
                             'message' => 'Ticket Booking Successfully',
                             'status' => 'success',
                             'data' => $res
                         ];
-                            return $this->respond($output,200);
+							return $this->respond($output,200);
+					}else{
+						$db  = \Config\Database::connect();
+						$query = $db->getLastQuery();
+						$output = [
+                            'message' => $db->error(),
+                            'status' => 'fail',
+                            'data' => $res
+                        ];
+							return $this->respond($output);
+					}
                 
                         
                     } else {

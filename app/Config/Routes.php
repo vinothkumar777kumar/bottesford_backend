@@ -51,6 +51,7 @@ $routes->get('/', 'TeamController::index');
 		$routes->get('editteam/(:any)', 'TeamController::editteamsbyid/$1');
 		$routes->post('updateteam','TeamController::updateteam');
 		$routes->get('deleteteams/(:any)', 'TeamController::deleteteams/$1');
+		
 
 		// add player
 		$routes->post('addplayer','TeamController::addplayer');
@@ -58,6 +59,7 @@ $routes->get('/', 'TeamController::index');
 		$routes->get('editteamplayer/(:any)', 'TeamController::editteamplayer/$1');
 		$routes->post('updateteamplayer/(:any)','TeamController::updateteamplayer/$1');
 		$routes->get('deleteplayerimage/(:any)', 'TeamController::deleteplayerimage/$1');
+		$routes->get('deleteplayer/(:any)', 'TeamController::deleteplayer/$1');
 
 		// get player
 		
@@ -123,6 +125,8 @@ $routes->get('/', 'TeamController::index');
 		$routes->post('updateblog/(:any)','BlogController::updateblog/$1');
 		$routes->get('deleteblog/(:any)', 'BlogController::deletblog/$1');
 		$routes->get('deleteblogimage/(:any)', 'BlogController::deleteblogimage/$1');
+
+		$routes->get('getmatchschedule', 'MatchController::getmatchschedule');
 		 
 		 
 		 

@@ -112,7 +112,10 @@ $this->protect = new AuthController();
                             'team_one' => $data['team_one'],
                             'team_one_image' => $teamonerandom_name,
                             'team_two' => $data['team_two'],
-                            'team_two_image' => $teamtworandom_name
+							'team_two_image' => $teamtworandom_name,
+							'start_time'=> $data['start_time'],
+							'end_time'=> $data['end_time'],
+							'ticket_price'=> $data['ticket_price']
                         ];
                         // $model = new TicketModel();
                         // return json_encode($user_data);
@@ -634,7 +637,10 @@ return $this->respond($output, 200);
                             'team_one' => $data['team_one'],
                             'team_one_image' => $teamonerandom_name,
                             'team_two' => $data['team_two'],
-                            'team_two_image' => $teamtworandom_name
+							'team_two_image' => $teamtworandom_name,
+							'start_time'=> $data['start_time'],
+							'end_time'=> $data['end_time'],
+							'ticket_price'=> $data['ticket_price']
                         ];
                     
                         
@@ -700,7 +706,39 @@ return $this->respond($output, 200);
 						'data' => $getmatch
 					];
 return $this->respond($output, 200);
-    }
+	}
+	
+	public function getmatchschedule(){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
+					$res = $this->model->get_matchschedule();					
+					$output = [
+						'status' => 'success',
+						'data' => $res
+					];
+
+return $this->respond($output, 200);
+					// $output = [
+					// 	'message' => 'Access granted'
+					// ];
+					// return $this->respond($output, 200);
+		// 		}
+		// 	} catch (\Exception $e) {
+		// 		$output = [
+		// 				'message' => 'Access denied',
+		// 				'error' => $e->getMessage()
+		// 			];
+		// 			return $this->respond($output, 401);
+		// 	}
+		// }
+	}
 
 
 	//--------------------------------------------------------------------

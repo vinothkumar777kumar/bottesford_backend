@@ -9,7 +9,8 @@ class MatchModel extends Model
 {
 	protected $table = 'match_tbl';
 protected $primaryKey = 'id';
-	protected $allowedFields = ['team_one','team_one_image','team_two','team_two_image','match_name','round','match_date'];
+	protected $allowedFields = ['team_one','team_one_image','team_two','team_two_image',
+	'match_name','round','match_date','start_time','end_time','ticket_price'];
 	
 
 public function getTeams($id){
@@ -86,6 +87,18 @@ public function getnextmatch(){
     // $builder->limit(1);
     // $query = $builder->get();
     // return $query;
+}
+
+public function get_matchschedule(){
+	$db  = \Config\Database::connect();
+	// $now =  date('d-m-Y H:i:s');
+	// return $now;
+	$builder = $db->table($this->table);
+	$builder->select('*');
+	// $builder->where('match_date >=', $now);
+	// $builder->where('created_at <=', $todayend);
+	$q = $builder->get();
+	return $q->getResult();
 }
 }
 ?>

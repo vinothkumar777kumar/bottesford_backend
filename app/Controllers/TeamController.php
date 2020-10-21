@@ -304,7 +304,49 @@ return $this->respond($output, 200);
                         'status' => 'success',
                         'message' => 'Team Deleted Successfully'
 					];
-return $this->respond($output, 200);
+		return $this->respond($output, 200);
+                }else{
+                    $output = [
+						'status' => 'fail',
+						'error' => $delete
+					];
+return $this->respond($output, 401);   
+                }
+					// $output = [
+					// 	'message' => 'Access granted'
+					// ];
+					// return $this->respond($output, 200);
+				}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
+		}
+	}
+
+	public function deleteplayer($id)
+	{
+		
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		if($token){
+			try {
+				$decode = JWT::decode($token,$secret_key,array('HS256'));
+				if($decode){
+                    $delete = $this->model->deleteplayer($id);
+                
+					if($delete){
+					$output = [
+                        'status' => 'success',
+                        'message' => 'Player Deleted Successfully'
+					];
+		return $this->respond($output, 200);
                 }else{
                     $output = [
 						'status' => 'fail',

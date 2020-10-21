@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 13, 2020 at 10:02 AM
+-- Generation Time: Oct 19, 2020 at 07:13 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -43,8 +43,7 @@ CREATE TABLE `blog_tbl` (
 --
 
 INSERT INTO `blog_tbl` (`id`, `blog_image`, `title`, `publish_date`, `description`, `status`, `created_at`, `updated_at`) VALUES
-(2, '908739-copy_fc_logo.png', 'update blog title', '08-10-2020', 'update description', 0, '2020-10-10 12:12:27', '2020-10-10 12:12:27'),
-(4, '161209-gameschd2.jpg', 'Blog Title', '14-10-2020', 'test blog description', 1, '2020-10-10 15:22:54', '2020-10-10 15:22:54');
+(1, '763707-gamesch4.jpg', 'Test Blog Title', '15-10-2020', 'test blog description', 1, '2020-10-15 16:48:41', '2020-10-15 16:48:41');
 
 -- --------------------------------------------------------
 
@@ -72,10 +71,8 @@ CREATE TABLE `match_result_tbl` (
 --
 
 INSERT INTO `match_result_tbl` (`id`, `team_one`, `team_one_image`, `team_two`, `team_two_image`, `match_name`, `team_one_goal`, `team_two_goal`, `match_date`, `video_url`, `created_at`, `updated_at`) VALUES
-(1, 'Bottesford Town F.C', '376987-BottesfordTown_logo.png', 'FC Barcelona', '341448-bg_1.jpg', 'Friendly Match', 3, 4, '12-10-2020', 'https://www.youtube.com/watch?v=HE0vLjTLIzM', '2020-10-12 16:26:14', '2020-10-12 16:26:14'),
-(2, 'FC Barcelona', '216894-bg_1.jpg', 'Bottesford Town F.C', '662111-BottesfordTown_logo.png', 'friendly match', 2, 1, '12-10-2020', 'https://www.youtube.com/watch?v=HE0vLjTLIzM', '2020-10-12 18:08:45', '2020-10-12 18:08:45'),
-(3, 'Bottesford Town F.C', '914838-BottesfordTown_logo.png', 'FC Barcelona', '123485-bg_1.jpg', 'friendly match', 3, 2, '12-10-2020', 'https://www.youtube.com/watch?v=L4aBqvbP_MM', '2020-10-12 18:45:12', '2020-10-12 18:45:12'),
-(4, 'Liverpool F.C.', '677841-gameschd2.jpg', 'Bottesford Town F.C', '763135-BottesfordTown_logo.png', 'local tornament', 2, 3, '12-10-2020', 'https://www.youtube.com/watch?v=q3Bzoca3dfc', '2020-10-12 22:29:12', '2020-10-12 22:29:12');
+(1, 'FC Barcelona', '442338-complete.png', 'Bottesford Town F.C', '486665-BottesfordTown_logo.png', 'second match play', 3, 2, '15-10-2020', 'https://www.youtube.com/watch?v=lPDOh5ZifyM', '2020-10-15 17:06:16', '2020-10-15 17:06:16'),
+(2, 'Bottesford Town F.C', '863201-fc_logo.png', 'FC Barcelona', '487945-complete.png', 'scondary match result', 3, 3, '15-10-2020', 'https://www.youtube.com/watch?v=L4aBqvbP_MM', '2020-10-15 19:28:53', '2020-10-15 19:28:53');
 
 -- --------------------------------------------------------
 
@@ -92,6 +89,9 @@ CREATE TABLE `match_tbl` (
   `match_name` varchar(30) NOT NULL,
   `round` varchar(20) NOT NULL,
   `match_date` varchar(20) NOT NULL,
+  `start_time` varchar(20) NOT NULL,
+  `end_time` varchar(20) NOT NULL,
+  `ticket_price` double DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -100,11 +100,11 @@ CREATE TABLE `match_tbl` (
 -- Dumping data for table `match_tbl`
 --
 
-INSERT INTO `match_tbl` (`id`, `team_one`, `team_one_image`, `team_two`, `team_two_image`, `match_name`, `round`, `match_date`, `created_at`, `updated_at`) VALUES
-(1, 'Bottesford Town F.C', '137859-BottesfordTown_logo.png', 'FC Barcelona', '409361-complete.png', 'World Cup', 'first', '10-10-2020', '2020-10-09 16:50:26', '2020-10-09 16:50:26'),
-(2, 'FC Barcelona', '924152-complete.png', 'Bottesford Town F.C', '964744-BottesfordTown_logo.png', 'world cup', 'semi final', '11-10-2020', '2020-10-09 16:52:42', '2020-10-09 16:52:42'),
-(3, 'Bottesford Town F.C', '402951-BottesfordTown_logo.png', 'Bottesford Town F.C', '825546-login_img.jpg', 'Friendly match', 'first', '14-10-2020', '2020-10-10 15:21:46', '2020-10-10 15:21:46'),
-(4, 'Liverpool F.C.', '720241-image_5.jpg', 'Bottesford Town F.C', '519684-BottesfordTown_logo.png', 'Local tornament', 'first', '13-10-2020', '2020-10-12 22:27:16', '2020-10-12 22:27:16');
+INSERT INTO `match_tbl` (`id`, `team_one`, `team_one_image`, `team_two`, `team_two_image`, `match_name`, `round`, `match_date`, `start_time`, `end_time`, `ticket_price`, `created_at`, `updated_at`) VALUES
+(1, 'Bottesford Town F.C', '218000-BottesfordTown_logo.png', 'FC Barcelona', '124460-complete.png', 'Test Match', 'first', '16-10-2020', '4:41 PM', '10:47 PM', 2.7, '2020-10-15 16:47:03', '2020-10-15 16:47:03'),
+(2, 'FC Barcelona', '857550-complete.png', 'Bottesford Town F.C', '891018-BottesfordTown_logo.png', 'second match', 'second', '15-10-2020', '7:04 PM', '9:04 PM', 1.27, '2020-10-15 17:04:59', '2020-10-15 17:04:59'),
+(3, 'Bottesford Town F.C', '195643-BottesfordTown_logo.png', 'FC Barcelona', '417443-complete.png', 'Tornament', 'first', '17-10-2020', '6:19 PM', '11:19 PM', 1.32, '2020-10-15 18:19:30', '2020-10-15 18:19:30'),
+(4, 'FC Barcelona', '133577-complete.png', 'Bottesford Town F.C', '733942-BottesfordTown_logo.png', 'tornament second match', 'second', '19-10-2020', '7:24 PM', '12:24 PM', 2.17, '2020-10-15 18:24:18', '2020-10-15 18:24:18');
 
 -- --------------------------------------------------------
 
@@ -156,16 +156,10 @@ CREATE TABLE `players` (
 --
 
 INSERT INTO `players` (`id`, `team`, `player_image`, `description`, `player_name`, `position`, `squad_no`, `dateofbirth`, `signed_date`, `player_height`, `country`, `created_at`, `updated_at`) VALUES
-(1, 1, '940294-person_1.jpg', 'test player description', ' DAVID EASTERS', 'Left Fullback', 6, '11-10-1990', '09-09-2020', 6.7, 'uk', '2020-10-09 11:15:03', '2020-10-09 11:15:03'),
-(2, 2, '498424-person_2.jpg', 'player description', 'Rock', 'Defending/Holding Midfielder', 14, '06-10-1992', '07-09-2020', 6.2, 'uk', '2020-10-09 12:50:49', '2020-10-09 12:50:49'),
-(3, 1, '568183-gameschd1.jpg', 'bottesford fc player', 'Antoine Griezmann', 'Right Midfielder/Winger', 5, '12-10-1989', '28-09-2020', 5.8, 'uk', '2020-10-09 13:28:52', '2020-10-09 13:28:52'),
-(4, 1, '39627-image_5.jpg', 'player description', 'Francisco Trincão', 'Right Midfielder/Winger', 9, '03-10-1989', '09-09-2020', 6.4, 'uk', '2020-10-09 13:30:32', '2020-10-09 13:30:32'),
-(5, 1, '834992-person_4.jpg', 'test player description', 'Ronald Araújo', 'Attacking Midfielder/Playmaker', 12, '12-10-1994', '08-09-2020', 4.9, 'uk', '2020-10-09 13:32:01', '2020-10-09 13:32:01'),
-(6, 1, '323404-player2.jpg', 'test description', 'Ansu Fati', 'Central/Box-to-Box Midfielder', 14, '21-10-1989', '09-09-2020', 6.8, 'uk', '2020-10-09 13:33:05', '2020-10-09 13:33:05'),
-(7, 3, '382071-image_2.jpg', 'test team player description', 'Nik Scalzo', 'Left Fullback', 5, '16-09-1994', '10-10-2020', 5.7, 'uk', '2020-10-10 15:19:18', '2020-10-10 15:19:18'),
-(8, 4, '216380-about.jpg', 'test player description', 'Hari', 'Center Back (or Sweeper, if used)', 3, '12-10-2000', '12-10-2020', 5.9, 'uk', '2020-10-12 22:24:05', '2020-10-12 22:24:05'),
-(9, 4, '929307-image_1.jpg', 'test prabu player description', 'Prabu', 'Defending/Holding Midfielder', 8, '12-10-2000', '12-10-2020', 7.2, 'uk', '2020-10-12 22:25:53', '2020-10-12 22:25:53'),
-(10, 5, '641435-Eden_Hazard.jpg', 'test eden hazard player description', 'Eden Hazard', 'Center Back (or Sweeper, if used)', 6, '13-10-1995', '13-10-2020', 6.3, 'uk', '2020-10-13 11:15:29', '2020-10-13 11:15:29');
+(1, 1, '971953-BottesfordTown_logo.png', 'test player description', 'Kalvin Phillips', 'Defending/Holding Midfielder', 1, '12-10-1995', '06-10-2020', 6.8, 'uk', '2020-10-15 16:28:08', '2020-10-15 16:28:08'),
+(2, 1, '129448-Eden_Hazard.jpg', 'test player description', 'Eden Hazard', 'Right Midfielder/Winger', 2, '08-10-2008', '16-09-2020', 5.8, 'uk', '2020-10-15 16:29:15', '2020-10-15 16:29:15'),
+(3, 2, '148156-complete.png', 'test player description', 'Lionel Messi', 'Defending/Holding Midfielder', 4, '12-10-1994', '16-10-2019', 7.1, 'uk', '2020-10-15 16:32:19', '2020-10-15 16:32:19'),
+(4, 2, '96410-person_4.jpg', 'test player description', 'Francisco Trincão', 'Defending/Holding Midfielder', 7, '11-10-1990', '07-10-2014', 7.3, 'uk', '2020-10-15 16:33:43', '2020-10-15 16:33:43');
 
 -- --------------------------------------------------------
 
@@ -185,13 +179,6 @@ CREATE TABLE `sports_hall_booking_tbl` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `sports_hall_booking_tbl`
---
-
-INSERT INTO `sports_hall_booking_tbl` (`id`, `user_id`, `name`, `email`, `mobile`, `purpose`, `booking_date`, `location`, `created_at`, `updated_at`) VALUES
-(1, 8, 'Previn', 'Previn@mailinator.com', '03753853856', 'Sports Event', '15-10-2020', 'uk', '2020-10-13 13:27:07', '2020-10-13 13:27:07');
 
 -- --------------------------------------------------------
 
@@ -216,10 +203,8 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`id`, `team_name`, `team_manager_name`, `team_manager_mobile`, `team_manager_email`, `status`, `role_type`, `created_at`, `updated_at`) VALUES
-(2, 'FC Barcelona', 'Rock', '08375389659', 'Rock@mailinator.com', 1, 3, '2020-10-09 12:47:39', '2020-10-09 12:47:39'),
-(3, 'Bottesford Town F.C', 'Jimmy McNeil', '08573563756', 'Jimmy@mailinator.com', 1, 3, '2020-10-10 15:15:50', '2020-10-10 15:15:50'),
-(4, 'Liverpool F.C.', 'Thomas', '03573957385', 'Thomas@mailinator.com', 1, 3, '2020-10-12 22:23:09', '2020-10-12 22:23:09'),
-(5, 'Real Madrid.', 'Zinedine Zidane', '03538975385', 'Zinedine@mailinator.com', 1, 3, '2020-10-13 11:12:44', '2020-10-13 11:12:44');
+(1, 'Bottesford Town F.C', 'Jimmy McNeil', '07845634785', 'Jimmy@mailinator.com', 1, 3, '2020-10-15 16:25:36', '2020-10-15 16:25:36'),
+(2, 'FC Barcelona', 'Ronald Koeman', '07835637856', 'Ronald@mailinator.com', 1, 3, '2020-10-15 16:30:57', '2020-10-15 16:30:57');
 
 -- --------------------------------------------------------
 
@@ -247,9 +232,22 @@ CREATE TABLE `ticket_booking` (
 --
 
 INSERT INTO `ticket_booking` (`id`, `match_id`, `match_type`, `matchdate`, `team_one`, `team_one_img`, `team_two`, `team_two_img`, `ticket`, `ticket_price`, `user_id`, `created_at`) VALUES
-(1, 3, 'Friendly match', 'Oct 14, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/600635-BottesfordTown_logo.png', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/825546-login_img.jpg', 559, 2.7, 5, '2020-10-10 15:25:30'),
-(2, 3, 'Friendly match', 'Oct 14, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/402951-BottesfordTown_logo.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/825546-login_img.jpg', 3, 2.7, 4, '2020-10-12 13:01:56'),
-(3, 3, 'Friendly match', 'Oct 14, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/402951-BottesfordTown_logo.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/825546-login_img.jpg', 424, 2.7, 8, '2020-10-13 13:20:33');
+(1, 1, 'Test Match', 'Oct 16, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/218000-BottesfordTown_logo.png', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/124460-complete.png', 218, 2.7, 9, '2020-10-15 16:55:20'),
+(2, 2, 'second match', 'Oct 15, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/857550-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/891018-BottesfordTown_logo.png', 247, 1.27, 9, '2020-10-15 17:09:56'),
+(3, 2, 'second match', 'Oct 15, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/857550-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/891018-BottesfordTown_logo.png', 217, 1.27, 10, '2020-10-15 17:23:57'),
+(4, 1, '', 'Oct 16, 2020', 'Bottesford Town F.C', '', 'FC Barcelona', '', 151, 2.7, 0, '2020-10-16 21:17:43'),
+(5, 3, 'Tornament', 'Oct 17, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/195643-BottesfordTown_logo.png', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/417443-complete.png', 626, 1.32, 10, '2020-10-16 21:22:08'),
+(6, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 115, 2.17, 10, '2020-10-16 21:22:08'),
+(7, 1, 'Test Match', 'Oct 16, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/218000-BottesfordTown_logo.png', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/124460-complete.png', 521, 2.7, 10, '2020-10-16 21:31:02'),
+(8, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 64, 2.17, 10, '2020-10-16 21:31:02'),
+(9, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 814, 2.17, 9, '2020-10-17 11:03:17'),
+(15, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 351, 2.17, 9, '2020-10-17 12:35:58'),
+(17, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 525, 2.17, 10, '2020-10-17 13:23:24'),
+(18, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 506, 2.17, 10, '2020-10-17 14:08:37'),
+(19, 3, 'Tornament', 'Oct 17, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/195643-BottesfordTown_logo.png', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/417443-complete.png', 423, 1.32, 10, '2020-10-17 14:08:37'),
+(20, 3, 'Tornament', 'Oct 17, 2020', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/195643-BottesfordTown_logo.png', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/417443-complete.png', 72, 1.32, 10, '2020-10-17 14:25:19'),
+(21, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 459, 2.17, 10, '2020-10-19 10:41:24'),
+(22, 4, 'tornament second match', 'Oct 19, 2020', 'FC Barcelona', 'http://192.168.43.55/bottesford_backend/uploads/match/133577-complete.png', 'Bottesford Town F.C', 'http://192.168.43.55/bottesford_backend/uploads/match/733942-BottesfordTown_logo.png', 20, 2.17, 10, '2020-10-19 10:41:24');
 
 -- --------------------------------------------------------
 
@@ -278,13 +276,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `mobile`, `address_one`, `town`, `postcode`, `status`, `role_type`, `created_at`, `updated_at`) VALUES
 (1, 'Admin', 'Admin@bottesford.com', '$2y$10$JAkp0JvuEp49N7Y7FmyT7OvPSoRDViLPJdzOLrXQdZ.Oild38p5zq', '07835678345', NULL, NULL, NULL, 1, 1, '2020-10-08 23:02:50', '2020-10-08 23:02:50'),
-(2, 'Rock', 'Rock@mailinator.com', '$2y$10$diJJcaU1VfDrcPMlJ90uHeoUhMQT/KDPt/6sOLQ70YQJtNWh/MrT2', '09388378397', NULL, NULL, NULL, 1, 2, '2020-10-08 23:21:15', '2020-10-08 23:21:15'),
-(3, 'Juan Ferrando', 'Juanferrando@mailinator.com', '$2y$10$ZyqPtYC5GM7gfChKQ5UTZu.WerUErDQYpm.XTVfDmk20iSSgsD5MO', '94674986706', NULL, NULL, NULL, 1, 2, '2020-10-09 13:02:51', '2020-10-09 13:02:51'),
-(4, 'Harry ', 'Harry@mailinator.com', '$2y$10$tqNoOz1vynwStcBBFyYuduJJq31NX1MXoaPHfahSnAp796KzgcK4W', '08395738563', NULL, NULL, NULL, 1, 3, '2020-10-09 16:47:02', '2020-10-09 16:47:02'),
-(5, 'Terry Wilson Jr.', 'Tery@mailinator.com', '$2y$10$38rxOL2NGXkTrw6T2wldIucCa121G6ACa/JvO994wIUGQ4W5LwLA2', '08539759385', NULL, NULL, NULL, 1, 3, '2020-10-10 15:24:43', '2020-10-10 15:24:43'),
-(6, 'Jimmy McNeil', 'Jimmy@mailinator.com', '$2y$10$MGlUU1BSSyK2dJD0VcvJdutS4IKJ6ZzATK05oRyTFfWshIGrIsXSq', '08476846748', NULL, NULL, NULL, 1, 2, '2020-10-10 15:31:17', '2020-10-10 15:31:17'),
-(7, 'Zinedine Zidane', 'Zinedine@mailinator.com', '$2y$10$AdrG57K/ivSetWDLzAcF7uQW/QmC8GAcDewptCvlkn3FZALewJ.Sm', '90327857329', NULL, NULL, NULL, 1, 2, '2020-10-13 11:18:54', '2020-10-13 11:18:54'),
-(8, 'Previn', 'Previn@mailinator.com', '$2y$10$wCMcS2YgSt8/tDKKexmNsONodlNlUBQ1M4rGbSflZcDPvHwD18wuG', '03895739856', NULL, NULL, NULL, 1, 3, '2020-10-13 13:19:44', '2020-10-13 13:19:44');
+(9, 'George ', 'George@mailinator.com', '$2y$10$XDkA.NPFNleZseIxe3ohNu1ht2hhsqt8cb8fu5ad5cPDuRxad0ePe', '03856378563', NULL, NULL, NULL, 1, 3, '2020-10-15 16:54:50', '2020-10-15 16:54:50'),
+(10, 'Jack ', 'Jack@mailinator.com', '$2y$10$vF7Yd03m1KjgPCE63CQlKO9ykdYzhz/moXlr/4DkwdCXFhiE4Y2Hq', '09837583537', NULL, NULL, NULL, 1, 3, '2020-10-15 17:23:33', '2020-10-15 17:23:33');
 
 --
 -- Indexes for dumped tables
@@ -352,19 +345,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `blog_tbl`
 --
 ALTER TABLE `blog_tbl`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `match_result_tbl`
 --
 ALTER TABLE `match_result_tbl`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `match_tbl`
 --
 ALTER TABLE `match_tbl`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -376,31 +369,31 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `players`
 --
 ALTER TABLE `players`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `sports_hall_booking_tbl`
 --
 ALTER TABLE `sports_hall_booking_tbl`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `ticket_booking`
 --
 ALTER TABLE `ticket_booking`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
