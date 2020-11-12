@@ -46,7 +46,9 @@ $this->protect = new AuthController();
                             'mobile' => $data->mobile,
                             'purpose' => $data->purpose,
                             'booking_date' => $data->booking_date,
-                            'location' => $data->location
+							'location' => $data->location,
+							'start_time' => $data->start_time,
+							'end_time' => $data->end_time
                         ];
                         // return json_encode($hall_data);
                         // $model = new TicketModel();

@@ -10,7 +10,8 @@ class MatchModel extends Model
 	protected $table = 'match_tbl';
 protected $primaryKey = 'id';
 	protected $allowedFields = ['team_one','team_one_image','team_two','team_two_image',
-	'match_name','round','match_date','start_time','end_time','ticket_price'];
+	'match_name','round','match_date','start_time','end_time','adult_ticket_price','conses_ticket_price',
+'under_16_ticket_price','no_of_tickets','is_active'];
 	
 
 public function getTeams($id){
@@ -74,7 +75,11 @@ public function updatematch($data){
 public function getnextmatch(){
     $query =  $this->table('match_tbl')->countAll();
 	if($query > 0){
-		$data = $this->table('match_tbl')->orderBy('match_date', 'ASC')->get()->getResultArray();
+		// $data = $this->table('match_tbl')->orderBy('match_date', 'ASC')->where('is_active',1)->get()->getResultArray();
+		$d = $this->db->query("select mt.*, count(tbt.match_id) as sold_ticket_count FROM match_tbl as mt
+		left join ticket_booking as tbt on mt.id = tbt.match_id
+		where mt.is_active = 1 group by match_date ASC");
+		$data = $d->getResult();
 	}else{
 		$data = [];
 	}
@@ -87,6 +92,17 @@ public function getnextmatch(){
     // $builder->limit(1);
     // $query = $builder->get();
     // return $query;
+}
+
+
+
+
+public function editmatch($id){
+	$db  = \Config\Database::connect();
+	$d = $this->db->query("select mt.*, count(tbt.match_id) as sold_ticket_count FROM match_tbl as mt
+		left join ticket_booking as tbt on mt.id = tbt.match_id
+		where mt.id =".$id)->getResult();
+		return $d;
 }
 
 public function get_matchschedule(){

@@ -115,7 +115,11 @@ $this->protect = new AuthController();
 							'team_two_image' => $teamtworandom_name,
 							'start_time'=> $data['start_time'],
 							'end_time'=> $data['end_time'],
-							'ticket_price'=> $data['ticket_price']
+							'adult_ticket_price'=> $data['adult_ticket_price'],
+							'conses_ticket_price'=> $data['conses_ticket_price'],
+							'under_16_ticket_price'=> $data['under_16_ticket_price'],
+							'no_of_tickets'=> $data['no_of_tickets'],
+							'is_active'=> $data['is_active']
                         ];
                         // $model = new TicketModel();
                         // return json_encode($user_data);
@@ -131,7 +135,7 @@ $this->protect = new AuthController();
                                 'error' => $this->db->error(),
                                 'status' => 'fail'
                             ];
-                                return $this->respond($output,401);
+                                return $this->respond($output,502);
                         }
                      
                 
@@ -161,7 +165,7 @@ $this->protect = new AuthController();
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
 		// 		if($decode){
-							$teams = $this->model->findAll();
+							$teams = $this->model->orderBy('match_date', 'DESC')->findAll();
 							$output = [
 								'status' => 'success',
 								'data' => $teams
@@ -263,7 +267,7 @@ $this->protect = new AuthController();
 			try {
 				$decode = JWT::decode($token,$secret_key,array('HS256'));
 				if($decode){
-					$getteams = $this->model->find($id);
+					$getteams = $this->model->editmatch($id);
 					
 					$output = [
 						'status' => 'success',
@@ -640,7 +644,11 @@ return $this->respond($output, 200);
 							'team_two_image' => $teamtworandom_name,
 							'start_time'=> $data['start_time'],
 							'end_time'=> $data['end_time'],
-							'ticket_price'=> $data['ticket_price']
+							'adult_ticket_price'=> $data['adult_ticket_price'],
+							'conses_ticket_price'=> $data['conses_ticket_price'],
+							'under_16_ticket_price'=> $data['under_16_ticket_price'],
+							'no_of_tickets'=> $data['no_of_tickets'],
+							'is_active'=> $data['is_active']
                         ];
                     
                         
@@ -683,7 +691,7 @@ return $this->respond($output, 200);
 		if(file_exists($path)){
 			unlink($path);
 			$output = [
-				'message' => 'Player Image Deleted.',
+				'message' => 'Team Image Deleted.',
 				'status' => 'success'
 			];
 				return $this->respond($output,200);

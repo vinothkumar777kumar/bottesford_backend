@@ -52,10 +52,15 @@ $this->protect = new AuthController();
                             'team_two' => $t->team_two,
                             'team_two_img' => $t->team_two_image,
                             'ticket' => $t->ticket,
-                            'ticket_price' => $t->ticket_price,
-                            'user_id' => $user_id
+							'ticket_price' => $t->ticket_price,
+							'type' => $t->type,
+							'adult_ticket_price' => $t->adult_ticket_price,
+							'conses_ticket_price' => $t->conses_ticket_price,
+							'under_16_ticket_price' => $t->under_16_ticket_price,
+                            'user_id' => $t->user_id
 						];
 					}
+					// return json_encode($user_data);
 					$res = $this->model->insertBatch($user_data);
 						// return json_encode($user_data);
                         // $model = new TicketModel();

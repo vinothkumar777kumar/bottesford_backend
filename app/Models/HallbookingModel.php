@@ -9,7 +9,7 @@ class HallbookingModel extends Model
 {
 	protected $table = 'sports_hall_booking_tbl';
 protected $primaryKey = 'id';
-	protected $allowedFields = ['user_id','name','email','mobile','purpose','booking_date','location'];
+	protected $allowedFields = ['user_id','name','email','mobile','purpose','booking_date','location','start_time','end_time'];
 	
 
 public function getbookhalldata($id){
