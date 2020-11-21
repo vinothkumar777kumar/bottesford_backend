@@ -21,7 +21,9 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'https://web.wavefrontech.com/vinod/api/';
+	// public $baseURL = 'https://web.wavefrontech.com/vinod/api/';
+
+	public $baseURL = 'http://192.168.43.56/bottesford_backend/';
 
 	/*
 	|--------------------------------------------------------------------------

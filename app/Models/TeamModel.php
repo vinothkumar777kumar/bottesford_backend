@@ -7,6 +7,7 @@ use CodeIgniter\Model;
 */
 class TeamModel extends Model
 {
+	// $db  = \Config\Database::connect();
 	protected $table = 'teams';
 protected $primaryKey = 'id';
 	protected $allowedFields = ['team_name','team_manager_name','team_manager_mobile','team_manager_email','status'];

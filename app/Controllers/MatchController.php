@@ -52,8 +52,8 @@ $this->protect = new AuthController();
 							);
 						}else 
 						{
-							$teamonerandom_name = rand(1000,1000000)."-".$teamone_img_name;
-							$upload_name = $upload_dir.strtolower($teamonerandom_name);
+							$teamonerandom_name = rand(1000,1000000)."-".strtolower($teamone_img_name);
+							$upload_name = $upload_dir.''.$teamonerandom_name;
 							$upload_name = preg_replace('/\s+/', '-', $upload_name);
 
 							if(move_uploaded_file($teamoneimg_tmp_name , $upload_name)) {
@@ -84,8 +84,8 @@ $this->protect = new AuthController();
 							);
 						}else 
 						{
-							$teamtworandom_name = rand(1000,1000000)."-".$teamtwo_img_name;
-							$upload_name = $upload_dir.strtolower($teamtworandom_name);
+							$teamtworandom_name = rand(1000,1000000)."-".strtolower($teamtwo_img_name);
+							$upload_name = $upload_dir.''.$teamtworandom_name;
 							$upload_name = preg_replace('/\s+/', '-', $upload_name);
 
 							if(move_uploaded_file($teamtwoimg_tmp_name , $upload_name)) {
@@ -273,7 +273,7 @@ $this->protect = new AuthController();
 						'status' => 'success',
 						'data' => $getteams
 					];
-return $this->respond($output, 200);
+				return $this->respond($output, 200);
 					// $output = [
 					// 	'message' => 'Access granted'
 					// ];
@@ -299,51 +299,49 @@ return $this->respond($output, 200);
 			try {
 				$decode = JWT::decode($token,$secret_key,array('HS256'));
 				if($decode){
-	helper(['form', 'url']);
-	$this->validation = \Config\Services::validation();
-	if ($this->request->getMethod() == 'post') {
-		$data = $this->request->getJSON();
-		$team_data = [
-			'id'=> $data->id,
-			'team_name' => $data->team_name,
-			'status' => $data->status
-		];
-		
-			
-			$update_id = $data->id;
-			// echo json_encode($userdata);
-            $res =  $this->model->where(['id' => $update_id])->set($team_data)->update();
-            if($res){
-			$output = [
-                'status' => 'success',
-                'message' => 'Team Update Successfully.'
-            ];
-            return $this->respond($output, 200);
-        }else{
-            $output = [
-                'status' => 'faile',
-                'error' => $res
-            ];
-            return $this->respond($output, 401);  
-        }
-		
-	} else {
-		return $this->fail('Only post request is allowed');
-	}
-}
-} catch (\Exception $e) {
-	$output = [
-			'message' => 'Access denied',
-			'error' => $e->getMessage()
-		];
-		return $this->respond($output, 401);
-}
+				helper(['form', 'url']);
+				$this->validation = \Config\Services::validation();
+				if ($this->request->getMethod() == 'post') {
+					$data = $this->request->getJSON();
+					$team_data = [
+						'id'=> $data->id,
+						'team_name' => $data->team_name,
+						'status' => $data->status
+					];
+					
+						
+						$update_id = $data->id;
+						// echo json_encode($userdata);
+						$res =  $this->model->where(['id' => $update_id])->set($team_data)->update();
+						if($res){
+						$output = [
+							'status' => 'success',
+							'message' => 'Team Update Successfully.'
+						];
+						return $this->respond($output, 200);
+					}else{
+						$output = [
+							'status' => 'faile',
+							'error' => $res
+						];
+						return $this->respond($output, 401);  
+					}
+					
+				} else {
+					return $this->fail('Only post request is allowed');
+				}
+			}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
 }
     }
     
-    public function deletematch($id)
-	{
-		
+    public function deletematch($id){
 		$secret_key = $this->protect->privateKey();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
@@ -360,19 +358,19 @@ return $this->respond($output, 200);
                         'status' => 'success',
                         'message' => 'Match Deleted Successfully'
 					];
-return $this->respond($output, 200);
-                }else{
-                    $output = [
-						'status' => 'fail',
-						'error' => $delete
-					];
-return $this->respond($output, 401);   
-                }
-					// $output = [
-					// 	'message' => 'Access granted'
-					// ];
-					// return $this->respond($output, 200);
-				}
+					return $this->respond($output, 200);
+									}else{
+										$output = [
+											'status' => 'fail',
+											'error' => $delete
+										];
+					return $this->respond($output, 401);   
+									}
+										// $output = [
+										// 	'message' => 'Access granted'
+										// ];
+										// return $this->respond($output, 200);
+									}
 			} catch (\Exception $e) {
 				$output = [
 						'message' => 'Access denied',
@@ -573,8 +571,8 @@ return $this->respond($output, 200);
                           );
                       }else 
                       {
-                          $teamonerandom_name = rand(1000,1000000)."-".$teamone_img_name;
-                          $upload_name = $upload_dir.strtolower($teamonerandom_name);
+						  $teamonerandom_name = rand(1000,1000000)."-".strtolower($teamone_img_name);
+                          $upload_name = $upload_dir.''.$teamonerandom_name;
                           $upload_name = preg_replace('/\s+/', '-', $upload_name);
 
                           if(move_uploaded_file($teamoneimg_tmp_name , $upload_name)) {
@@ -609,8 +607,8 @@ return $this->respond($output, 200);
                           );
                       }else 
                       {
-                          $teamtworandom_name = rand(1000,1000000)."-".$teamtwo_img_name;
-                          $upload_name = $upload_dir.strtolower($teamtworandom_name);
+                          $teamtworandom_name = rand(1000,1000000)."-".strtolower($teamtwo_img_name);
+                          $upload_name = $upload_dir.''.$teamtworandom_name;
                           $upload_name = preg_replace('/\s+/', '-', $upload_name);
 
                           if(move_uploaded_file($teamtwoimg_tmp_name , $upload_name)) {

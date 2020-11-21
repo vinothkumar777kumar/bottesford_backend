@@ -19,7 +19,7 @@ class TeamController extends ResourceController
 $this->protect = new AuthController();
 	}
 	public function index(){
-		// echo view('welcome_message');
+		echo view('welcome_message');
 			}
 	
 
@@ -90,7 +90,7 @@ $this->protect = new AuthController();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 			// try {
 				// $decode = JWT::decode($token,$secret_key,array('HS256'));

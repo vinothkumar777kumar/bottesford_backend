@@ -10,7 +10,7 @@ class TicketModel extends Model
 	protected $table = 'ticket_booking';
 protected $primaryKey = 'id';
 	protected $allowedFields = ['match_id','match_type','matchdate','team_one','team_one_img','team_two',
-	'team_two_img','ticket','ticket_price','user_id'];
+	'team_two_img','ticket','ticket_price','user_id','adult_ticket_price','conses_ticket_price','under_16_ticket_price'];
 	
 
 public function gettickets($id){

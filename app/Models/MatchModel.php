@@ -73,12 +73,12 @@ public function updatematch($data){
 }
 
 public function getnextmatch(){
-    $query =  $this->table('match_tbl')->countAll();
+	$db  = \Config\Database::connect();
+    $query =  $db->table('match_tbl')->countAll();
 	if($query > 0){
 		// $data = $this->table('match_tbl')->orderBy('match_date', 'ASC')->where('is_active',1)->get()->getResultArray();
-		$d = $this->db->query("select mt.*, count(tbt.match_id) as sold_ticket_count FROM match_tbl as mt
-		left join ticket_booking as tbt on mt.id = tbt.match_id
-		where mt.is_active = 1 group by match_date ASC");
+		$d = $this->db->query("select mt.*,count(tbt.match_id) as sold_ticket_count  FROM match_tbl as mt
+		left join ticket_booking as tbt on  mt.id = tbt.match_id where mt.is_active = 1 group by mt.id ASC");
 		$data = $d->getResult();
 	}else{
 		$data = [];

@@ -222,12 +222,23 @@ return $this->respond($output, 200);
 					// echo count($res);
 					foreach($res as $d){
 						$ticketcount = $this->model->getnotickets($d->user_id,$d->match_id);
+						$adult_t_p = 0;
+						$conse_t_p = 0;
+						$under16_t_p = 0;
+						foreach($ticketcount as $t){
+$adult_t_p += $t->adult_ticket_price;
+$conse_t_p += $t->conses_ticket_price;
+$under16_t_p += $t->under_16_ticket_price;
+						}
 						$data[] = array(
 							'ticket'=>$d->ticket,
 							'matchdate'=>$d->matchdate,
 							'team_one'=>$d->team_one,
 							'team_two'=>$d->team_two,
-							'ticket_price'=>$d->ticket_price,
+							'ticket_price'=>$adult_t_p + $conse_t_p + $under16_t_p,
+							'adult_ticket_price' => $adult_t_p,
+							'conses_ticket_price' => $conse_t_p,
+							'under_16_ticket_price' => $under16_t_p,
 							'match_type'=>$d->match_type,
 							'name'=>$d->name,
 							'total_ticket'=>count($ticketcount)

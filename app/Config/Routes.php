@@ -33,8 +33,6 @@ $routes->options('(:any)', 'OptionsController::options'); //one options method f
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'TeamController::index');
-
-
 	$routes->group('api',['namespace' => 'App\Controllers'],function($routes){
 		// authendication
 		$routes->post('register','AuthController::userregister');
@@ -85,6 +83,12 @@ $routes->get('/', 'TeamController::index');
 		$routes->post('bookhall','HallbookingController::hallbooking');
 		$routes->get('getsportshallbookdata/(:any)', 'HallbookingController::getbooksportsdata/$1');
 		$routes->get('get_sportshallbooked', 'HallbookingController::gethallbookeddata');
+		$routes->get('delethallbooking/(:any)', 'HallbookingController::deletehallbooking/$1');
+		$routes->get('getsportshalldata/(:any)', 'HallbookingController::editsportshalldata/$1');
+		$routes->post('updatesportshall','HallbookingController::updatesportshall');
+		$routes->post('blockbook','HallbookingController::blockbook');
+		
+		
 
 		// get users list
 		$routes->get('users', 'Home::getallusers');

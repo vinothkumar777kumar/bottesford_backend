@@ -82,8 +82,9 @@ public function getallmatchresult(){
 }
 
 public function getlastmatchresult(){
-    $query =  $this->table($this->table)->countAll();
-	if($query > 0){
+	$db  = \Config\Database::connect();
+    $builder =  $db->table($this->table)->countAll();
+	if($builder > 0){
 		$data = $this->table($this->table)->orderBy('match_date', 'DESC')->limit(1)->get()->getResultArray();
 	}else{
 		$data = [];

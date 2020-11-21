@@ -9,7 +9,7 @@ class HallbookingModel extends Model
 {
 	protected $table = 'sports_hall_booking_tbl';
 protected $primaryKey = 'id';
-	protected $allowedFields = ['user_id','name','email','mobile','purpose','booking_date','location','start_time','end_time'];
+	protected $allowedFields = ['user_id','name','email','mobile','purpose','booking_date','location','start_time','end_time','status'];
 	
 
 public function getbookhalldata($id){
@@ -17,11 +17,30 @@ public function getbookhalldata($id){
 	->where('user_id', $id)
 	->countAll();
 	if($query > 0){
-		$data = $this->table($this->table)->where('user_id', $id)->get()->getResultArray();
+		$data = $this->table($this->table)->where('user_id', $id)->where('status', 1)->get()->getResultArray();
 	}else{
 		$data = [];
 	}
 	return $data;
+}
+
+public function gethallbookingdata(){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('sports_hall_booking_tbl');
+	$builder->select('sports_hall_booking_tbl.*,users.name,users.mobile');
+	$builder->join('users', 'users.id = sports_hall_booking_tbl.user_id');
+	$q = $builder->get();
+	return $q->getResult();
+}
+
+public function editsportshall($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('sports_hall_booking_tbl');
+	$builder->select('sports_hall_booking_tbl.*,users.name,users.mobile');
+	$builder->join('users', 'sports_hall_booking_tbl.user_id = users.id','left');
+	$builder->where('sports_hall_booking_tbl.id', $id);
+	$q = $builder->get();
+	return $q->getResult();
 }
 
 public function addplayers($data){
@@ -86,6 +105,15 @@ public function getnextmatch(){
     // $builder->limit(1);
     // $query = $builder->get();
     // return $query;
+}
+
+public function getusers($user_id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('users');
+	$builder->select('*');
+	$builder->where('id', $user_id);
+	$d = $builder->get()->getResult();
+	return $d;
 }
 }
 ?>
