@@ -50,13 +50,13 @@ class Validation
 	public $manager_signup = [
 		'name' => ['rules' => 'required|min_length[3]|max_length[20]',],
 	'email' => [
-		'rules' => 'required|valid_email|is_unique[team_manager_tbl.email]',
+		'rules' => 'required|valid_email|is_unique[users.email]',
 	],
 	'password' => [
 		'rules' => 'required|min_length[8]|max_length[255]',
 	],
 	'mobile' => [
-		'rules' => 'required|is_unique[team_manager_tbl.mobile]',
+		'rules' => 'required|is_unique[users.mobile]',
 	]
 	];
 
@@ -85,6 +85,9 @@ class Validation
 		],
 		'team_manager_name' => [
 			'rules' => 'required',
+		],
+		'team_manager_mobile' => [
+			'rules' => 'required|is_unique[teams.team_manager_mobile]'
 		],
 		'team_manager_email' => [
 			'rules' => 'required|valid_email|is_unique[teams.team_manager_email]',

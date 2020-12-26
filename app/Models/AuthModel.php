@@ -9,7 +9,7 @@ class AuthModel extends Model
 {
 	protected $table = 'users';
 protected $primaryKey = 'id';
-	protected $allowedFields = ['name','email','password','mobile','status','role_type'];
+	protected $allowedFields = ['name','email','password','mobile','status','role_type','uniid','activation_date'];
 	protected $beforeInsert = ['beforeInsert'];
 	protected $beforeUpdate = ['beforeUpdate'];
 	
@@ -47,12 +47,88 @@ return $data;
 		$query = $this->table($this->table)
 						->where('email', $email)
 						->countAll();
+						// return $email;
 		if($query > 0){
 			$data = $this->table($this->table)->where('email', $email)->limit(1)->get()->getRowArray();
 		}else{
 			$data = [];
 		}
 		return $data;
+	}
+
+	public function checkemail($email){
+		$query = $this->table($this->table)
+						->where('email', $email)
+						->countAll();
+		if($query > 0){
+			$data = $this->table($this->table)->where('email', $email)->limit(1)->get()->getRowArray();
+		}else{
+			$data = [];
+		}
+		return $data;
+	}
+
+	public function updatedAt($uniid){
+		$builder = $this->db->table('users');
+		$builder->where('uniid',$uniid);
+		$builder->update(['updated_at' => date('Y-m-d h:i:s')]);
+		if($this->db->affectedRows() == 1){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
+	public function verifyUniid($uniid){	
+		// return $uniid;
+		$builder = $this->db->table('users');
+		$builder->select('activation_date,uniid,status');
+		$builder->where('uniid',$uniid);
+		$result = $builder->get();
+		return $result->getRow();
+		if($builder->countAll()==1){
+			return $result->getRow();
+		}else{
+			return false;
+		}
+	}
+
+	public function verifyresetpaswdUniid($uniid){
+		$builder = $this->db->table('users');
+		$builder->select('updated_at,uniid,name');
+		$builder->where('uniid',$uniid);
+		$result = $builder->get();
+		// return $result->getRow();
+		if(count($result->getResultArray())==1){
+			return $result->getRowArray();
+		}else{
+			return false;
+		}
+	}
+
+	public function updatestatus($uniid){
+		$db  = \Config\Database::connect();
+		$builder = $this->db->table('users');
+		$builder->where('uniid',$uniid);
+		$builder->update(['status' => 1]);
+		if($this->db->affectedRows() == 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public function updatepassword($uniid,$pwd){
+		$db  = \Config\Database::connect();
+		$builder = $this->db->table('users');
+		$builder->where('uniid',$uniid);
+		$builder->update(['password' => $pwd]);
+		if($this->db->affectedRows() == 1){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	

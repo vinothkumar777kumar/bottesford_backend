@@ -19,6 +19,14 @@ class TeamController extends ResourceController
 $this->protect = new AuthController();
 	}
 	public function index(){
+		$db = \Config\Database::connect();
+		$tables = $db->listTables();
+
+
+	foreach ($tables as $table)
+	{
+			echo $table;
+	}
 		echo view('welcome_message');
 			}
 	
@@ -36,24 +44,59 @@ $this->protect = new AuthController();
 			try {
 				$decode = JWT::decode($token,$secret_key,array('HS256'));
 				if($decode){
-                    helper(['form', 'url']);
+					helper(['form', 'url']);
+					$upload_dir = 'uploads/';
 					$this->validation = \Config\Services::validation();
 					$encrypter = \Config\Services::encrypter();
                     if ($this->request->getMethod() == 'post') {
                         
-                        $data = $this->request->getJSON();
+						$data = $this->request->getPost();
+						$img_name = $_FILES['manager_image']['name'];
+						$img_tmp_name = $_FILES["manager_image"]["tmp_name"];
+						$error = $_FILES["manager_image"]["error"];
+						if($error > 0){
+							$response = array(
+								"status" => "error",
+								"error" => true,
+								"message" => "Error uploading the file!"
+							);
+						}else 
+						{
+							$random_name = rand(1000,1000000)."-".strtolower($img_name);
+							$upload_name = $upload_dir.''.$random_name;
+							$upload_name = preg_replace('/\s+/', '-', $upload_name);
+
+							if(move_uploaded_file($img_tmp_name , $upload_name)) {
+								$response = array(
+									"status" => "success",
+									"error" => false,
+									"message" => "File uploaded successfully",
+									"url" => $upload_name
+								);
+							}else
+							{
+								$response = array(
+									"status" => "error",
+									"error" => true,
+									"message" => "Error uploading the file!"
+								);
+							}
+						}
                         $team_data = [
-							'team_name'=> $data->team_name,
-							'team_manager_name'=> $data->team_manager_name,
-							'team_manager_mobile'=> $data->team_manager_mobile,
-							'team_manager_email'=> $data->team_manager_email,
+							'team_name'=> $data['team_name'],
+							'manager_image' => $random_name,
+							'team_manager_name'=> $data['team_manager_name'],
+							'team_manager_mobile'=> $data['team_manager_mobile'],
+							'team_manager_email'=> $data['team_manager_email'],
+							'country'=> $data['country'],
+							'description'=> $data['description'],
 							// 'team_manager_password'=> base64_encode($encrypter->encrypt($data->team_manager_password)),
-                            'status' => $data->status
+                            'status' => $data['status']
                         ];
 						$rules = [
 							$team_data['team_name'] => 'required',
 							$team_data['team_manager_name'] => 'required',
-							$user_data['team_manager_mobile'] => 'required|is_unique[teams.mobile]',
+							$team_data['team_manager_mobile'] => 'required|is_unique[teams.team_manager_mobile]',
 							$team_data['team_manager_email'] => 'required|valid_email|is_unique[teams.team_manager_email]',
 							// $team_data['team_manager_password'] => 'required|min_length[8]|max_length[255]'
 						];
@@ -62,12 +105,20 @@ $this->protect = new AuthController();
 						if (!$msg) {
 							return $this->respondCreated(['status' => false, 'error' => $this->validation->getErrors()]);
 						} else {
-                        $res = $this->model->insert($team_data);
+						$res = $this->model->insert($team_data);
+						if($res == true){
                         $output = [
                             'message' => 'Team Added Successfully',
                             'status' => 'success'
                         ];
-                            return $this->respond($output,200);
+							return $this->respond($output,200);
+					}else{
+						$output = [
+                            'message' => 'Team Not Added',
+                            'status' => 'success'
+                        ];
+							return $this->respond($output,401);
+					}
 					}
                         
                     } else {
@@ -202,11 +253,11 @@ $this->protect = new AuthController();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
-		if($token){
-			try {
-				$decode = JWT::decode($token,$secret_key,array('HS256'));
-				if($decode){
+		// $token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
 					$getteams = $this->model->find($id);
 					
 					$output = [
@@ -218,15 +269,15 @@ return $this->respond($output, 200);
 					// 	'message' => 'Access granted'
 					// ];
 					// return $this->respond($output, 200);
-				}
-			} catch (\Exception $e) {
-				$output = [
-						'message' => 'Access denied',
-						'error' => $e->getMessage()
-					];
-					return $this->respond($output, 401);
-			}
-		}
+		// 		}
+		// 	} catch (\Exception $e) {
+		// 		$output = [
+		// 				'message' => 'Access denied',
+		// 				'error' => $e->getMessage()
+		// 			];
+		// 			return $this->respond($output, 401);
+		// 	}
+		// }
     }
     
     public function updateteam(){
@@ -240,20 +291,59 @@ return $this->respond($output, 200);
 				$decode = JWT::decode($token,$secret_key,array('HS256'));
 				if($decode){
 	helper(['form', 'url']);
+	$upload_dir = 'uploads/';
 	$this->validation = \Config\Services::validation();
 	if ($this->request->getMethod() == 'post') {
-		$data = $this->request->getJSON();
-		$team_data = [
-			'team_name'=> $data->team_name,
-			'team_manager_name'=> $data->team_manager_name,
-			'team_manager_mobile'=> $data->team_manager_mobile,
-			'team_manager_email'=> $data->team_manager_email,
-			// 'team_manager_password'=> base64_encode($encrypter->encrypt($data->team_manager_password)),
-			'status' => $data->status
-		];
+		$data = $this->request->getPost();
+		if(!empty($_FILES['manager_image']['name'])){
+			$img_name = $_FILES['manager_image']['name'];
+		$img_tmp_name = $_FILES["manager_image"]["tmp_name"];
+		$error = $_FILES["manager_image"]["error"];
+		if($error > 0){
+			$response = array(
+				"status" => "error",
+				"error" => true,
+				"message" => "Error uploading the file!"
+			);
+		}else 
+		{
+			$random_name = rand(1000,1000000)."-".strtolower($img_name);
+			$upload_name = $upload_dir.''.$random_name;
+			$upload_name = preg_replace('/\s+/', '-', $upload_name);
+
+			if(move_uploaded_file($img_tmp_name , $upload_name)) {
+				$response = array(
+					"status" => "success",
+					"error" => false,
+					"message" => "File uploaded successfully",
+					"url" => $upload_name
+				);
+			}else
+			{
+				$response = array(
+					"status" => "error",
+					"error" => true,
+					"message" => "Error uploading the file!"
+				);
+			}
+		}
+	}else{
+		$random_name = $data['manager_image'];
+	}
+	$team_data = [
+		'team_name'=> $data['team_name'],
+		'manager_image' => $random_name,
+		'team_manager_name'=> $data['team_manager_name'],
+		'team_manager_mobile'=> $data['team_manager_mobile'],
+		'team_manager_email'=> $data['team_manager_email'],
+		'country'=> $data['country'],
+		'description'=> $data['description'],
+		// 'team_manager_password'=> base64_encode($encrypter->encrypt($data->team_manager_password)),
+		'status' => $data['status']
+	];
 		
 			
-			$update_id = $data->id;
+			$update_id = $data['id'];
 			// echo json_encode($userdata);
             $res =  $this->model->where(['id' => $update_id])->set($team_data)->update();
             if($res){
@@ -399,8 +489,8 @@ return $this->respond($output, 401);
 							);
 						}else 
 						{
-							$random_name = rand(1000,1000000)."-".$img_name;
-							$upload_name = $upload_dir.strtolower($random_name);
+							$random_name = rand(1000,1000000)."-".strtolower($img_name);
+							$upload_name = $upload_dir.''.$random_name;
 							$upload_name = preg_replace('/\s+/', '-', $upload_name);
 
 							if(move_uploaded_file($img_tmp_name , $upload_name)) {
@@ -408,7 +498,7 @@ return $this->respond($output, 401);
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -430,7 +520,12 @@ return $this->respond($output, 401);
 							'dateofbirth' => $data['dateofbirth'],
 							'signed_date' => $data['signed_date'],
 							'player_height' => $data['player_height'],
-							'country' => $data['country']
+							'subs_fees' => $data['subs_fees'],
+							'country' => $data['country'],
+							'guardian_name' => $data['guardian_name'],
+							'guardian_mobile' => $data['guardian_mobile'],
+							'guardian_email' => $data['guardian_email'],
+							'guardian_address' => $data['guardian_address']
                         ];
                         
                         // return json_encode($player_data);
@@ -474,15 +569,22 @@ return $this->respond($output, 401);
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 			// try {
 				// $decode = JWT::decode($token,$secret_key,array('HS256'));
 				// if($decode){
+					$matchdata = [];
 							$players = $this->model->getteamplayers($id);
+							$manager_data = $this->model->getteammanager($id);
+							if(!empty($players)){
+								$matchdata = $this->model->getteammatch($players[0]->team);
+							}
 							$output = [
 								'status' => 'success',
-								'data' => $players
+								'data' => $players,
+								'match_data' => $matchdata,
+								'manager_data' => $manager_data
 							];
 							return $this->respond($output, 200);
 				
@@ -505,7 +607,7 @@ return $this->respond($output, 401);
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
@@ -536,7 +638,7 @@ return $this->respond($output, 401);
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
@@ -642,9 +744,10 @@ return $this->respond($output, 200);
                     if ($this->request->getMethod() == 'post') {
                         
 						$data = $this->request->getPost();
-						$img_name = $_FILES['image']['name'];
+						
 						// return $data['image'];
-						if($img_name){
+						if(!empty($_FILES['image']['name'])){
+							$img_name = $_FILES['image']['name'];
 						$img_tmp_name = $_FILES["image"]["tmp_name"];
 						$error = $_FILES["image"]["error"];
 						if($error > 0){
@@ -655,8 +758,8 @@ return $this->respond($output, 200);
 							);
 						}else 
 						{
-							$random_name = rand(1000,1000000)."-".$img_name;
-							$upload_name = $upload_dir.strtolower($random_name);
+							$random_name = rand(1000,1000000)."-".strtolower($img_name);
+							$upload_name = $upload_dir.''.$random_name;
 							$upload_name = preg_replace('/\s+/', '-', $upload_name);
 
 							if(move_uploaded_file($img_tmp_name , $upload_name)) {
@@ -664,7 +767,7 @@ return $this->respond($output, 200);
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -689,7 +792,12 @@ return $this->respond($output, 200);
 							'dateofbirth' => $data['dateofbirth'],
 							'signed_date' => $data['signed_date'],
 							'player_height' => $data['player_height'],
-							'country' => $data['country']
+							'subs_fees' => $data['subs_fees'],
+							'country' => $data['country'],
+							'guardian_name' => $data['guardian_name'],
+							'guardian_mobile' => $data['guardian_mobile'],
+							'guardian_email' => $data['guardian_email'],
+							'guardian_address' => $data['guardian_address']
                         ];
                         
                         // return json_encode($user_data);
@@ -747,6 +855,291 @@ return $this->respond($output, 200);
 		}
 		// return $ul;
 	}
+
+	public function getmanagerteamdata($id){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		// $token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
+					$getmanager_team_data = $this->model->getmanager($id);
+					
+					$output = [
+						'status' => 'success',
+						'data' => $getmanager_team_data
+					];
+return $this->respond($output, 200);
+		// 			$output = [
+		// 				'message' => 'Access granted'
+		// 			];
+		// 			return $this->respond($output, 200);
+		// 		}
+		// 	} catch (\Exception $e) {
+		// 		$output = [
+		// 				'message' => 'Access denied',
+		// 				'error' => $e->getMessage()
+		// 			];
+		// 			return $this->respond($output, 401);
+		// 	}
+		// }
+	}
+
+	// get children
+	public function getchild($id){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		// $token = $arr[1];
+		// if($token){
+		// 	try {
+		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
+		// 		if($decode){
+					$getplayer = $this->model->getchild($id);
+					$output = [
+						'status' => 'success',
+						'data' => $getplayer
+					];
+return $this->respond($output, 200);
+		// 			$output = [
+		// 				'message' => 'Access granted'
+		// 			];
+		// 			return $this->respond($output, 200);
+		// 		}
+		// // 	} catch (\Exception $e) {
+		// // 		$output = [
+		// // 				'message' => 'Access denied',
+		// // 				'error' => $e->getMessage()
+		// // 			];
+		// // 			return $this->respond($output, 401);
+		// // 	}
+		// // }
+	}
+
+	public function paysubs()
+	{
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		if($token){
+			
+			try {
+				$decode = JWT::decode($token,$secret_key,array('HS256'));
+				if($decode){
+                    helper(['form', 'url']);
+					$this->validation = \Config\Services::validation();
+					$encrypter = \Config\Services::encrypter();
+                    if ($this->request->getMethod() == 'post') {
+                        
+                        $data = $this->request->getJSON();
+                        $subs_data = [
+							'child'=> $data->child,
+							'pay_subs_date'=> $data->pay_subs_date,
+							'subs_fees'=> $data->subs_fees,
+							'user_id'=> $data->user_id
+                        ];
+						
+					
+						$res = $this->model->paysubs($subs_data);
+						
+						if($res){
+							try{
+                        $output = [
+                            'message' => 'Pay subs Added Successfully',
+                            'status' => 'success'
+                        ];
+							return $this->respond($output,200);
+					}catch (\Exception $e) {
+						$output = [
+								'message' => 'Pay subs not addedd',
+								'error' => $e->getMessage()
+							];
+							return $this->respond($output, 500);
+					}
+					}
+                        
+                    } else {
+                        return $this->fail('Only post request is allowed');
+                    }
+				}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
+		}
+	}
+
+	// membership payment
+	public function paymembership()
+	{
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		if($token){
+			
+			try {
+				$decode = JWT::decode($token,$secret_key,array('HS256'));
+				if($decode){
+                    helper(['form', 'url']);
+					$this->validation = \Config\Services::validation();
+					$encrypter = \Config\Services::encrypter();
+                    if ($this->request->getMethod() == 'post') {
+                        
+                        $data = $this->request->getJSON();
+                        $subs_data = [
+							'member_name'=> $data->member_name,
+							'email'=> $data->email,
+							'mobile'=>$data->mobile,
+							'member_pay_date'=> $data->member_pay_date,
+							'membership_amount'=> $data->membership_amount,
+							'user_id'=> $data->user_id
+                        ];
+						
+					
+						$res = $this->model->paymembership($subs_data);
+						
+						if($res){
+							$output = [
+								'message' => 'Membership Paid Successfully',
+								'status' => 'success'
+							];
+							try{
+								$email = \Config\Services::email();
+							$logo_path = base_url().'/assets/images/logo.jpg';
+							$email->attach($logo_path);
+							$to = $data->email;
+							$subject = 'Membership Payment Status';
+							$message = '<div style="text-align:center"><img style="height:280px;width:280px;border-radius:50%" src="'.$logo_path.'" alt="logo 1"/></div><br><br>Hi <b>'.$data->member_name.'</b>,<br><br> Membership paid Details<br><br><table style="width:100%;margin:0px auto;border: 1px solid black;border-collapse: collapse;">
+							<thead>
+							<tr>
+							<th style="border: 1px solid black">Member Email</th>
+							<th style="border: 1px solid black">Member Mobile</th>
+							<th style="border: 1px solid black">Paid Date</th>
+							<th style="border: 1px solid black">Membership Amount</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+							<td style="border: 1px solid black;text-align:center">'.$data->email.'</td>
+							<td style="border: 1px solid black;text-align:center">'.$data->mobile.'</td>
+							<td style="border: 1px solid black;text-align:center">'.$data->member_pay_date.'</td>
+							<td style="border: 1px solid black;text-align:center">'.$data->membership_amount.'</td>
+							</tr></tbody>
+							</table> <br><br>Thanks<br>Team';
+							
+							$email->setFrom('Info@email.com', 'Info');
+							$email->setTo($to);
+							// $email->setCC('another@example.com');
+							// $email->setBCC('and@another.com');
+							
+							$email->setSubject($subject);
+							$email->setMessage($message);
+							if($email->send()){
+								$output['user_mail_sent'] = true;
+							}else{
+								$output['user_mail_sent'] = false;
+							}
+                       
+							return $this->respond($output,200);
+					}catch (\Exception $e) {
+						$output = [
+								'message' => 'Membership Paid not complete',
+								'error' => $e->getMessage()
+							];
+							return $this->respond($output, 500);
+					}
+					}
+                        
+                    } else {
+                        return $this->fail('Only post request is allowed');
+                    }
+				}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
+		}
+	}
+
+	public function getmembershipdata($id){
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		if($token){
+			try {
+				$decode = JWT::decode($token,$secret_key,array('HS256'));
+				if($decode){
+					// return $id;
+							$membershipdata = $this->model->getmembershippayeddata($id);
+							// print_r($players);
+							// return;
+							$output = [
+								'status' => 'success',
+								'data' => $membershipdata
+							];
+							return $this->respond($output, 200);
+				
+				}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
+		}
+	}
+
+	public function getpaysubs($id)
+	{
+		$secret_key = $this->protect->privateKey();
+		$token  = null;
+		$authHeader = $this->request->getHeader('Authorization');
+		$arr = explode(" ", $authHeader);
+		$token = $arr[1];
+		if($token){
+			try {
+				$decode = JWT::decode($token,$secret_key,array('HS256'));
+				if($decode){
+					$getteams = $this->model->getpaysubschilddata($id);
+					
+					$output = [
+						'status' => 'success',
+						'data' => $getteams
+					];
+return $this->respond($output, 200);
+					// $output = [
+					// 	'message' => 'Access granted'
+					// ];
+					// return $this->respond($output, 200);
+				}
+			} catch (\Exception $e) {
+				$output = [
+						'message' => 'Access denied',
+						'error' => $e->getMessage()
+					];
+					return $this->respond($output, 401);
+			}
+		}
+    }
+    
+    
 
 
 	//--------------------------------------------------------------------

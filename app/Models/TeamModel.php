@@ -10,7 +10,8 @@ class TeamModel extends Model
 	// $db  = \Config\Database::connect();
 	protected $table = 'teams';
 protected $primaryKey = 'id';
-	protected $allowedFields = ['team_name','team_manager_name','team_manager_mobile','team_manager_email','status'];
+	protected $allowedFields = ['team_name','manager_image','team_manager_name','team_manager_mobile',
+	'team_manager_email','country','description','status'];
 	
 
 public function getTeams($id){
@@ -52,6 +53,14 @@ public function getteamplayers($id){
 	return $q->getResult();
 	
     // return $query->result();
+}
+
+public function  getteammanager($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('teams');
+	$builder->where('id', $id);
+	$q = $builder->get();
+	return $q->getResult();
 }
 
 public function getteamplayer($id){
@@ -137,6 +146,131 @@ public function deleteplayer($id){
 	$builder = $db->table('players');
 	$del = $builder->delete(['id' => $id]);
 	return $del;
+}
+
+public function getmanager($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('users');
+	$builder->select('*');
+	$builder->where('id', $id);
+	$q = $builder->get()->getResult();
+	
+	if($q){
+		$builder = $db->table('teams');
+	$builder->select('*');
+	$builder->where('team_manager_email', $q[0]->email);
+	$q = $builder->get()->getResult();
+	return $q;
+	}
+	
+
+}
+
+public function getteammatch($teamid){
+	$db  = \Config\Database::connect();
+	$query =  $this->table($this->table)->where('id', $teamid)->get()->getResult();
+	// return $query[0]->team_name;
+	if($query){
+		$where = "team_one='".$query[0]->team_name."' OR team_two='".$query[0]->team_name."'";
+	$builder = $db->table('match_tbl');
+	$builder->select('*');
+	$builder->where($where);
+	$q = $builder->get();
+	$data =  $q->getResult();
+	}else{
+		$data = [];
+	}
+	return $data;
+}
+
+public function getchild($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('users');
+	$builder->select('*');
+	$builder->where('id', $id);
+	$q = $builder->get()->getResult();
+	// return $q[0]->email;
+	if($q){
+		// $query =  $this->table('players')->where('guardian_email', $q[0]->email)->get()->getResult();
+		$builder = $db->table('players');
+		$builder->select('*');
+		$builder->where('guardian_email', $q[0]->email);
+		$query = $builder->get()->getResult();
+		if($query){
+		 $query = $query;
+		}else{
+			$query = [];
+		}
+
+	}else{
+		$query = [];
+	}
+	return $query;
+}
+
+public function paysubs($data){
+	$query = $this->db->table('paysub_tbl')->insert($data);
+	if($query){
+		try{
+			return true;
+		}catch (\Exception $e) {
+			$output = [
+					'message' => 'pay subs not addedd',
+					'error' => $e->getMessage()
+				];
+				return $this->respond($output, 401);
+		}
+	}
+	// return $query ? true : false;
+}
+
+public function paymembership($data){
+	$query = $this->db->table('membership_tbl')->insert($data);
+	if($query){
+		try{
+			return true;
+		}catch (\Exception $e) {
+			$output = [
+					'message' => 'Membership paid not complete',
+					'error' => $e->getMessage()
+				];
+				return $this->respond($output, 401);
+		}
+	}
+	// return $query ? true : false;
+}
+
+public function getmembershippayeddata($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('membership_tbl');
+	$builder->where('user_id', $id);
+	$q = $builder->get()->getResult();
+	return $q;
+}
+
+public function getpaysubschilddata($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('paysub_tbl');
+	$builder->select('paysub_tbl.*,players.player_name,players.guardian_name');
+	$builder->join('players', 'players.id = paysub_tbl.child');
+	$builder->where('child', $id);
+	$q = $builder->get()->getResult();
+	return $q;
+}
+
+public function addteam($data){
+	$query = $this->db->table('teams')->insert($data);
+	if($query){
+		try{
+			return true;
+		}catch (\Exception $e) {
+			$output = [
+					'message' => 'Team not addedd',
+					'error' => $e->getMessage()
+				];
+				return $this->respond($output, 401);
+		}
+	}
 }
 
 }

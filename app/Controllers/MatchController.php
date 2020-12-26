@@ -61,7 +61,7 @@ $this->protect = new AuthController();
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -93,7 +93,7 @@ $this->protect = new AuthController();
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -114,12 +114,13 @@ $this->protect = new AuthController();
                             'team_two' => $data['team_two'],
 							'team_two_image' => $teamtworandom_name,
 							'start_time'=> $data['start_time'],
-							'end_time'=> $data['end_time'],
+							'end_time'=> $data['start_time'],
 							'adult_ticket_price'=> $data['adult_ticket_price'],
 							'conses_ticket_price'=> $data['conses_ticket_price'],
 							'under_16_ticket_price'=> $data['under_16_ticket_price'],
 							'no_of_tickets'=> $data['no_of_tickets'],
-							'is_active'=> $data['is_active']
+							'is_active'=> $data['is_active'],
+							'user_id'=> $data['user_id']
                         ];
                         // $model = new TicketModel();
                         // return json_encode($user_data);
@@ -160,12 +161,12 @@ $this->protect = new AuthController();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
 		// 		if($decode){
-							$teams = $this->model->orderBy('match_date', 'DESC')->findAll();
+							$teams = $this->model->orderBy('created_at', 'DESC')->findAll();
 							$output = [
 								'status' => 'success',
 								'data' => $teams
@@ -420,7 +421,7 @@ $this->protect = new AuthController();
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -486,7 +487,7 @@ $this->protect = new AuthController();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 			// try {
 				// $decode = JWT::decode($token,$secret_key,array('HS256'));
@@ -559,8 +560,9 @@ return $this->respond($output, 200);
                         
 						$data = $this->request->getPost();
 					  // team one image uploade
-                      $teamone_img_name = $_FILES['team_one_image']['name'];
-                      if($teamone_img_name){
+                      
+                      if(!empty($_FILES['team_one_image']['name'])){
+						$teamone_img_name = $_FILES['team_one_image']['name'];
                       $teamoneimg_tmp_name = $_FILES["team_one_image"]["tmp_name"];
                       $teamone_error = $_FILES["team_one_image"]["error"];
                       if($teamone_error > 0){
@@ -580,7 +582,7 @@ return $this->respond($output, 200);
                                   "status" => "success",
                                   "error" => false,
                                   "message" => "File uploaded successfully",
-                                  "url" => $server_url."/".$upload_name
+                                  "url" => $upload_name
                               );
                           }else
                           {
@@ -595,8 +597,9 @@ return $this->respond($output, 200);
                         $teamonerandom_name = $data['team_one_image'];
                     }
                       // team two image uploade
-                      $teamtwo_img_name = $_FILES['team_two_image']['name'];
-                      if($teamtwo_img_name){
+                      
+                      if(!empty($_FILES['team_two_image']['name'])){
+						$teamtwo_img_name = $_FILES['team_two_image']['name'];
                       $teamtwoimg_tmp_name = $_FILES["team_two_image"]["tmp_name"];
                       $teamtwo_error = $_FILES["team_two_image"]["error"];
                       if($teamtwo_error > 0){
@@ -616,7 +619,7 @@ return $this->respond($output, 200);
                                   "status" => "success",
                                   "error" => false,
                                   "message" => "File uploaded successfully",
-                                  "url" => $server_url."/".$upload_name
+                                  "url" => $upload_name
                               );
                           }else
                           {
@@ -641,12 +644,13 @@ return $this->respond($output, 200);
                             'team_two' => $data['team_two'],
 							'team_two_image' => $teamtworandom_name,
 							'start_time'=> $data['start_time'],
-							'end_time'=> $data['end_time'],
+							'end_time'=> $data['start_time'],
 							'adult_ticket_price'=> $data['adult_ticket_price'],
 							'conses_ticket_price'=> $data['conses_ticket_price'],
 							'under_16_ticket_price'=> $data['under_16_ticket_price'],
 							'no_of_tickets'=> $data['no_of_tickets'],
-							'is_active'=> $data['is_active']
+							'is_active'=> $data['is_active'],
+							'user_id'=> $data['user_id']
                         ];
                     
                         
@@ -719,7 +723,7 @@ return $this->respond($output, 200);
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));

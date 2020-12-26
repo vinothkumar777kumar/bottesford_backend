@@ -2,6 +2,8 @@
   "apiurl":"https://web.wavefrontech.com/vinod/api/api/",
   "player_image_url":"https://web.wavefrontech.com/vinod/api/uploads/",
   "match_image_url":"https://web.wavefrontech.com/vinod/api/uploads/match/",
-  "blog_image_url":"https://web.wavefrontech.com/vinod/api/uploads/blog/"
+  "blog_image_url":"https://web.wavefrontech.com/vinod/api/uploads/blog/",
+  "bionewsfeed_image_url":"https://web.wavefrontech.com/vinod/api/uploads/bionewsfeed/",
+  "socialclub_image_url":"https://web.wavefrontech.com/vinod/api/uploads/socialclub/"
 }
     

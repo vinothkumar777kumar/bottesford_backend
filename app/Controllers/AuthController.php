@@ -17,6 +17,7 @@ class AuthController extends ResourceController
     private $Auth;
     public function __construct()
     {
+        helper('date');
         $this->Auth = new AuthModel();
         $this->setHeaders();
 
@@ -82,7 +83,7 @@ class AuthController extends ResourceController
                 $email = $data->email;
                 $password = $data->password;
                 $check_login = $this->Auth->check_login($email);
-                // return $this->respond($check_login, 200);
+                // return json_encode($check_login);
                 if (password_verify($password, $check_login['password'])) {
                     // if($check_login['role_type'] == 2){
                     //     $get_manager_data = $this->Auth->get_manager_data($check_login['email']);
@@ -203,13 +204,35 @@ class AuthController extends ResourceController
                 return $this->respondCreated(['status' => false, 'error' => $this->validation->getErrors()]);
             } else {
                 $model = new AuthModel();
+                $secret_key = $this->privateKey();
+                $issuser_claim = "THE_CLAIM";
+                $audience_claim = "THE_AUDIENCE";
+                $issuedat_claim = time();
+                $notbefore_claim = $issuedat_claim + 10;
+                $expire_claim = $issuedat_claim + 3600;
+
+                $token = [
+                    "iss" => $issuser_claim,
+                    "aud" => $audience_claim,
+                    "iat" => $issuedat_claim,
+                    "nbf" => $notbefore_claim,
+                    "exp" => $expire_claim,
+                    "data" => [
+                        'name' =>  $data->name,
+                        'email' => $data->email,
+                        'mobile' => $data->mobile
+                    ]
+                ];
+
+                $token = JWT::encode($token,$secret_key);
                 $userdata = [
                     'name' => $data->name,
                     'email' => $data->email,
                     'password' => $data->password,
-                    'mobile' => $data->mobile
+                    'mobile' => $data->mobile,
+                    'uniid' => md5(str_shuffle('abcdefghijklmnopqrstuvwxyz'.time()))
                 ];
-                // echo json_encode($userdata);
+                
                 $res = $model->insert($userdata);
                 // $data['id'] = $res;
                 // echo json_encode(['status'=> 'success','message' => 'User Register Successfully.']);
@@ -255,21 +278,48 @@ class AuthController extends ResourceController
                 // return $this->respondCreated(['status' => false, 'error' => $this->validation->getErrors()]);
             } else {
                     $model = new AuthModel();
+                    $uniid = md5(str_shuffle('abcdefghijklmnopqrstuvwxyz'.time()));
                     $userdata = [
                         'name' => $data->name,
                         'email' => $data->email,
                         'password' => password_hash($data->password, PASSWORD_DEFAULT),
                         'mobile' => $data->mobile,
                         'role_type' => $data->role_type,
-                        'status' => $data->status
+                        'status' => $data->status,
+                        'uniid' => $uniid,
+                        'activation_date' => date("Y-m-d h:i:s")
                     ];
-                    $register = $this->Auth->register($userdata);
-                    if ($register == true) {
-                           $output = [
+                    // return json_encode($userdata);
+                    if ($this->Auth->register($userdata)) {
+                        $email = \Config\Services::email();
+							$logo_path = base_url().'/assets/images/logo.jpg';
+							$email->attach($logo_path);
+							$to = $data->email;
+							$subject = 'Account Activation Link';
+                            $message = 'Hi '.$data->name.",<br><br>Thanks Your account created"
+                            ."successfully. Please click the below link to activate your account<br><br>"
+                            ."<a href='http://localhost:4200/login?uniid=".$uniid."'>Activate now</a><br><br>Thanks<br>Team";
+							
+							$email->setFrom('Info@email.com', 'Info');
+							$email->setTo($to);
+							// $email->setCC('another@example.com');
+							// $email->setBCC('and@another.com');
+							
+							$email->setSubject($subject);
+							$email->setMessage($message);
+                            $output = [
                                 'status' => 'success',
-                                'message' => 'Register Successfully',
+                                'message' => 'Account Created Successfully. Please Activate Your Account',
                             ];
+							if($email->send()){
+                                $output['mail_sent'] = true;
+                            }else{
+                                $output['mail_sent'] = false;
+                            }
+
+                          
                             return $this->respond($output, 200);
+                           
                     } else {
                        $output = [
                             'status' => '401',
@@ -291,17 +341,22 @@ class AuthController extends ResourceController
         $this->validation = \Config\Services::validation();
         if ($this->request->getMethod() == 'post') {
             $data = $this->request->getJSON();
+            $uniid = md5(str_shuffle('abcdefghijklmnopqrstuvwxyz'.time()));
             $user_data = [
                 'name' => $data->name,
                 'email' => $data->email,
                 'password' => $data->password,
-                'mobile' => $data->mobile
+                'mobile' => $data->mobile,
+                'role_type' => $data->role_type,
+                'status' => $data->status,
+                'uniid' => $uniid,
+                'activation_date' => date("Y-m-d h:i:s")
             ];
             $rules = [
                 $user_data['name'] => 'required|min_length[3]|max_length[20]',
-                $user_data['email'] => 'required|valid_email|is_unique[team_manager_tbl.email]',
+                $user_data['email'] => 'required|valid_email|is_unique[users.email]',
                 $user_data['password'] => 'required|min_length[8]|max_length[255]',
-                $user_data['mobile'] => 'required|is_unique[team_manager_tbl.mobile]'
+                $user_data['mobile'] => 'required|is_unique[users.mobile]'
             ];
             $error = $this->validation->setRules($rules);
             $msg = $this->validation->run($user_data, 'manager_signup');
@@ -315,18 +370,42 @@ class AuthController extends ResourceController
                 // return $this->respondCreated(['status' => false, 'error' => $this->validation->getErrors()]);
             } else {
                     $model = new AuthModel();
-                    $userdata = [
+                    $managerdata = [
                         'name' => $data->name,
                         'email' => $data->email,
                         'password' => password_hash($data->password, PASSWORD_DEFAULT),
-                        'mobile' => $data->mobile
+                        'mobile' => $data->mobile,
+                        'role_type' => $data->role_type,
+                        'status' => $data->status,
+                        'uniid' => $uniid,
+                        'activation_date' => date("Y-m-d h:i:s")
                     ];
-                    $register = $this->Auth->manager_signup($userdata);
-                    if ($register == true) {
+                    if ($this->Auth->register($managerdata)) {
+                        $email = \Config\Services::email();
+							$logo_path = base_url().'/assets/images/logo.jpg';
+							$email->attach($logo_path);
+							$to = $data->email;
+							$subject = 'Account Activation Link';
+                            $message = 'Hi '.$data->name.",<br><br>Thanks Your account created"
+                            ."successfully. Please click the below link to activate your account<br><br>"
+                            ."<a href='http://localhost:4200/admin?uniid=".$uniid."'>Activate now</a><br><br>Thanks<br>Team";
+							
+							$email->setFrom('Info@email.com', 'Info');
+							$email->setTo($to);
+							// $email->setCC('another@example.com');
+							// $email->setBCC('and@another.com');
+							
+							$email->setSubject($subject);
+							$email->setMessage($message);
                            $output = [
                                 'status' => 'success',
-                                'message' => 'Sign up Successfully',
+                                'message' => 'Account Created Successfully. Please Activate Your Account',
                             ];
+                            if($email->send()){
+                                $output['mail_sent'] = true;
+                            }else{
+                                $output['mail_sent'] = false;
+                            }
                             return $this->respond($output, 200);
                     } else {
                        $output = [
@@ -338,6 +417,225 @@ class AuthController extends ResourceController
                 }
         } else {
             return $this->fail('Only post request is allowed');
+        }
+    }
+
+    public function forgotpassword()
+	{
+        // return 'hi';
+		// $secret_key = $this->protect->privateKey();
+		// $token  = null;
+		// $authHeader = $this->request->getHeader('Authorization');
+		// $arr = explode(" ", $authHeader);
+		// $token = $arr[1];
+		// if($token){
+			
+			// try {
+				// $decode = JWT::decode($token,$secret_key,array('HS256'));
+				// if($decode){
+                    helper(['form', 'url']);
+					// $this->validation = \Config\Services::validation();
+					// $encrypter = \Config\Services::encrypter();
+                    if ($this->request->getMethod() == 'post') {
+                        
+                        $data = $this->request->getJSON();
+                        // return $data->email;
+                        // $team_data = [
+						// 	'team_name'=> $data->team_name,
+						// 	'team_manager_name'=> $data->team_manager_name,
+						// 	'team_manager_mobile'=> $data->team_manager_mobile,
+						// 	'team_manager_email'=> $data->team_manager_email,
+						// 	// 'team_manager_password'=> base64_encode($encrypter->encrypt($data->team_manager_password)),
+                        //     'status' => $data->status
+                        // ];
+					
+					
+                        $res = $this->Auth->checkemail($data->email);
+                        if($res == null){
+                            $output = [
+                                'message' => 'Email does not exist',
+                                'status' => 'fail'
+                            ];
+                                return $this->respond($output,404);
+                        }else if(!empty($res)){
+                            if($this->Auth->updatedAt($res['uniid'])){
+                                $email = \Config\Services::email();
+                                $logo_path = base_url().'/assets/images/logo.jpg';
+                                $email->attach($logo_path);
+                                $to = $data->email;
+                                $token = $res['uniid'];
+                                $subject = 'Reset Password Link';
+                                $message = 'Hi '.$res['name'].",<br><br>Your reset password request has been received.please click"
+                                ."the below link to reset your password.<br><br>"
+                                ."<a href='http://localhost:4200/reset-password?uniid=".$token."'>Click here to Reset Password</a><br><br>Thanks<br>Team";
+                                
+                                $email->setFrom('Info@email.com', 'Info');
+                                $email->setTo($to);
+                                // $email->setCC('another@example.com');
+                                // $email->setBCC('and@another.com');
+                                
+                                $email->setSubject($subject);
+                                $email->setMessage($message);
+                                if($email->send()){
+                                    $output = [
+                                        'message' => 'Reset password link sent to your registred email.Please verify with in 15mins',
+                                        'status' => 'success',
+                                        'mail_sent' => true
+                                    ];
+                                        return $this->respond($output,200);
+                                }else{
+                                    $err =  $email->printDebugger(['headers']);
+                                    $output = [
+                                        'message' => $err,
+                                        'mail_sent' => false
+                                    ];
+                                        return $this->respond($output,401);
+							// print_r();
+                                }
+                                
+                            }else{
+                                $output = [
+                                    'message' => 'Sorry! Unable to update.try again later',
+                                    'status' => 'success'
+                                ];
+                                    return $this->respond($output,401);
+                            }
+                            
+                        }
+                        // return json_encode($res);
+                       
+					
+                        
+                    } else {
+                        return $this->fail('Only post request is allowed');
+                    }
+				// }
+			// } catch (\Exception $e) {
+			// 	$output = [
+			// 			'message' => 'Access denied',
+			// 			'error' => $e->getMessage()
+			// 		];
+			// 		return $this->respond($output, 401);
+			// }
+		// }
+    }
+    
+    public function activate($uniid=null){
+        $data = [];
+        if(!empty($uniid)){
+            $userdata = $this->Auth->verifyUniid($uniid);
+            if($userdata){
+                if($this->verifyExpirytime(($userdata->activation_date))){
+                    if($userdata->status == 0){
+                        $status = $this->Auth->updatestatus($uniid);
+                        if($status == true){
+                            $output = [
+                                'message' => 'Your Account Activated Successfully',
+                                'status' => 'success'
+                            ];
+                            return $this->respond($output, 200);
+                        }
+
+                    }else{
+                        $output = [
+                            'message' => 'Your account is already activated',
+                            'status' => 'success'
+                        ];
+                        return $this->respond($output, 200);
+                    }
+
+                }else{
+                    $output = [
+                        'message' => 'sorry! Activation link was expired!',
+                        'status' => 'faile'
+                    ];
+                    return $this->respond($output, 401);
+                }
+
+            }else{
+                $output = [
+                    			'message' => 'sorry! we are unable to find your account',
+                    			'status' => 'faile'
+                    		];
+                    		return $this->respond($output, 401);
+            }
+        }else{
+            $output = [
+                'message' => 'sorry!  unable to process your request',
+                'status' => 'faile'
+            ];
+            return $this->respond($output, 401);
+        }
+    }
+
+    public function resetpassword($uniid=null){
+        $data = [];
+        if(!empty($uniid)){
+            $userdata = $this->Auth->verifyresetpaswdUniid($uniid);
+            if(!empty($userdata)){
+                if($this->checkExpirydate($userdata['updated_at'])){
+                    // $data = $this->checkExpirydate($userdata['updated_at']);
+                    // return $data;
+                    $data = $this->request->getJSON();
+                    $pwd = password_hash($data->password,PASSWORD_DEFAULT);
+                    if($this->Auth->updatepassword($uniid,$pwd)){
+                        $output = [
+                            'message' => 'Password Updated successfully. Login now',
+                            'status' => 'success'
+                        ];
+                        return $this->respond($output, 200);
+                    }else{
+                        $output = [
+                            'message' => 'Sorry! unable to update password. try again',
+                            'status' => 'faile'
+                        ];
+                        return $this->respond($output, 401);
+
+                    }
+                }else{
+                    $output = [
+                        'message' => 'Reset password link was expired.',
+                        'status' => 'faile'
+                    ];
+                    return $this->respond($output, 401);
+                }
+            }else{
+                $output = [
+                    'message' => 'sorry! unable to find user account',
+                    'status' => 'faile'
+                ];
+                return $this->respond($output, 401);
+            }
+
+        }else{
+            $output = [
+                'message' => 'sorry! unauthourized access',
+                'status' => 'faile'
+            ];
+            return $this->respond($output, 401);
+        }
+    }
+
+    public function checkExpirydate($time){
+        $update_time = strtotime($time);
+        $current_time = time();
+        $timediff = $current_time - $update_time;
+        // return $timediff;
+        if($timediff < 900){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function verifyExpirytime($regtime){
+        $currtime = now();
+        $regtime = strtotime($regtime);
+        $difftime = $currtime - $regtime;
+        if(3600 > $difftime){
+            return true;
+        }else{
+            return false;
         }
     }
 

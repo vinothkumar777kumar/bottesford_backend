@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use Config\Database;
 
 /**
 * 
@@ -11,7 +12,7 @@ class MatchModel extends Model
 protected $primaryKey = 'id';
 	protected $allowedFields = ['team_one','team_one_image','team_two','team_two_image',
 	'match_name','round','match_date','start_time','end_time','adult_ticket_price','conses_ticket_price',
-'under_16_ticket_price','no_of_tickets','is_active'];
+'under_16_ticket_price','no_of_tickets','is_active','user_id'];
 	
 
 public function getTeams($id){
@@ -73,7 +74,7 @@ public function updatematch($data){
 }
 
 public function getnextmatch(){
-	$db  = \Config\Database::connect();
+	$db  = Database::connect();
     $query =  $db->table('match_tbl')->countAll();
 	if($query > 0){
 		// $data = $this->table('match_tbl')->orderBy('match_date', 'ASC')->where('is_active',1)->get()->getResultArray();
@@ -116,5 +117,7 @@ public function get_matchschedule(){
 	$q = $builder->get();
 	return $q->getResult();
 }
+
+
 }
 ?>

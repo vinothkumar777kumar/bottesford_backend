@@ -10,6 +10,7 @@ unset($minPHPVersion);
 
 // Path to the front controller (this file)
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
+define("ENVIRONMENT","development");
 
 // Location of the Paths config file.
 // This is the line that might need to be changed, depending on your folder structure.

@@ -52,8 +52,8 @@ $this->protect = new AuthController();
 							);
 						}else 
 						{
-							$teamonerandom_name = rand(1000,1000000)."-".$teamone_img_name;
-							$upload_name = $upload_dir.strtolower($teamonerandom_name);
+							$teamonerandom_name = rand(1000,1000000)."-".strtolower($teamone_img_name);
+							$upload_name = $upload_dir.''.$teamonerandom_name;
 							$upload_name = preg_replace('/\s+/', '-', $upload_name);
 
 							if(move_uploaded_file($teamoneimg_tmp_name , $upload_name)) {
@@ -61,7 +61,7 @@ $this->protect = new AuthController();
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -84,8 +84,8 @@ $this->protect = new AuthController();
 							);
 						}else 
 						{
-							$teamtworandom_name = rand(1000,1000000)."-".$teamtwo_img_name;
-							$upload_name = $upload_dir.strtolower($teamtworandom_name);
+							$teamtworandom_name = rand(1000,1000000)."-".strtolower($teamtwo_img_name);
+							$upload_name = $upload_dir.''.$teamtworandom_name;
 							$upload_name = preg_replace('/\s+/', '-', $upload_name);
 
 							if(move_uploaded_file($teamtwoimg_tmp_name , $upload_name)) {
@@ -93,7 +93,7 @@ $this->protect = new AuthController();
 									"status" => "success",
 									"error" => false,
 									"message" => "File uploaded successfully",
-									"url" => $server_url."/".$upload_name
+									"url" => $upload_name
 								);
 							}else
 							{
@@ -155,7 +155,7 @@ $this->protect = new AuthController();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
@@ -212,7 +212,7 @@ $this->protect = new AuthController();
 		$token  = null;
 		$authHeader = $this->request->getHeader('Authorization');
 		$arr = explode(" ", $authHeader);
-		$token = $arr[1];
+		// $token = $arr[1];
 		// if($token){
 		// 	try {
 		// 		$decode = JWT::decode($token,$secret_key,array('HS256'));
@@ -353,8 +353,8 @@ return $this->respond($output, 401);
                           );
                       }else 
                       {
-                          $teamonerandom_name = rand(1000,1000000)."-".$teamone_img_name;
-                          $upload_name = $upload_dir.strtolower($teamonerandom_name);
+                          $teamonerandom_name = rand(1000,1000000)."-".strtolower($teamone_img_name);
+                          $upload_name = $upload_dir.''.$teamonerandom_name;
                           $upload_name = preg_replace('/\s+/', '-', $upload_name);
 
                           if(move_uploaded_file($teamoneimg_tmp_name , $upload_name)) {
@@ -362,7 +362,7 @@ return $this->respond($output, 401);
                                   "status" => "success",
                                   "error" => false,
                                   "message" => "File uploaded successfully",
-                                  "url" => $server_url."/".$upload_name
+                                  "url" => $upload_name
                               );
                           }else
                           {
@@ -389,8 +389,8 @@ return $this->respond($output, 401);
                           );
                       }else 
                       {
-                          $teamtworandom_name = rand(1000,1000000)."-".$teamtwo_img_name;
-                          $upload_name = $upload_dir.strtolower($teamtworandom_name);
+                          $teamtworandom_name = rand(1000,1000000)."-".strtolower($teamtwo_img_name);
+                          $upload_name = $upload_dir.''.$teamtworandom_name;
                           $upload_name = preg_replace('/\s+/', '-', $upload_name);
 
                           if(move_uploaded_file($teamtwoimg_tmp_name , $upload_name)) {
@@ -398,7 +398,7 @@ return $this->respond($output, 401);
                                   "status" => "success",
                                   "error" => false,
                                   "message" => "File uploaded successfully",
-                                  "url" => $server_url."/".$upload_name
+                                  "url" => $upload_name
                               );
                           }else
                           {

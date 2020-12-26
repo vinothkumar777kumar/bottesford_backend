@@ -37,6 +37,17 @@ public function get_userbookedtickets($match_id){
 	
 }
 
+public function get_matchticketreport($match_id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('ticket_booking');
+	$builder->select('ticket_booking.*,users.id,users.name,');
+	$builder->join('users', 'users.id = ticket_booking.user_id');
+	$builder->where('match_id', $match_id);
+	$q = $builder->get();
+	return $q->getResult();
+	
+}
+
 public function getnotickets($user_id,$match_id){
 	$db  = \Config\Database::connect();
 	$builder = $db->table('ticket_booking');
@@ -59,6 +70,27 @@ public function get_todaybookedtickets(){
 	$q = $builder->get();
 	return $q->getResult();
 }
+
+public function getpaysubschilddata($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('paysub_tbl');
+	$builder->select('paysub_tbl.*,players.player_name,players.guardian_name');
+	$builder->join('players', 'players.id = paysub_tbl.child');
+	$builder->where('user_id', $id);
+	$q = $builder->get()->getResult();
+	return $q;
+}
+
+
+public function getmembershippayeddata($id){
+	$db  = \Config\Database::connect();
+	$builder = $db->table('membership_tbl');
+	$builder->where('user_id', $id);
+	$q = $builder->get()->getResult();
+	return $q;
+}
+
+
 	
 }
 ?>
